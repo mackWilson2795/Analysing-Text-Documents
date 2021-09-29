@@ -4,9 +4,44 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
 import java.net.URL;
+import java.text.CharacterIterator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.text.BreakIterator;
+import java.util.Scanner;
 
 public class Document {
+String doc_ID;
+String document;
+HashMap<String, Integer> wordCounts;
+Double totalWordCount = 0.0;
 
+
+    private HashMap <String, Integer> instanceCounter(String seed){
+        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
+        BreakIterator wordIterator = BreakIterator.getWordInstance();
+        wordIterator.setText(seed);
+        int start = wordIterator.first();
+        int end = wordIterator.next();
+        for (end = wordIterator.next(); end != BreakIterator.DONE; end = wordIterator.next()) {
+            String word = document.substring(start, end);
+
+            if (wordMap.containsKey(word)) {
+            int count = wordMap.get(word);
+            wordMap.replace(word, count++);
+            }
+            else{
+                wordMap.put(word, 1);
+            }
+            totalWordCount++;
+            start = end;
+        }
+              return wordCounts;
+    }
+//private final String cleanDoc;
     /* ------- Task 0 ------- */
     /*  all the basic things  */
 
@@ -16,7 +51,8 @@ public class Document {
      * @param docURL the URL with the contents of the document
      */
     public Document(String docId, URL docURL) {
-        // TODO: Implement this constructor
+        doc_ID = docId;
+
     }
 
     /**
@@ -26,7 +62,20 @@ public class Document {
      *                 the document
      */
     public Document(String docId, String fileName) {
-        // TODO: Implement this constructor
+        doc_ID = docId;
+        StringBuilder seed = new StringBuilder();
+
+        try {
+            Scanner docScanner = new Scanner(new FileReader(fileName));
+            while (docScanner.hasNext()){
+                seed.append(docScanner.nextLine());
+            }
+        } catch (FileNotFoundException ioe) {
+            System.out.println("Error reading file.");
+        }
+
+        document = seed.toString();
+        wordCounts = instanceCounter(document);
     }
 
     /**
@@ -41,17 +90,37 @@ public class Document {
     /* ------- Task 1 ------- */
 
     public double averageWordLength() {
-        // TODO: Implement this method
+        BreakIterator iterator = BreakIterator.getWordInstance();
+        iterator.setText(document);
+        int start = iterator.first();
+        int wordCount = 0;
+        double charCount = 0.0;
+
+        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()){
+            String word = document.substring(start, end);
+
+            charCount += word.length();
+            wordCount++;
+            start = end;
         return 0.0;
     }
+    private int totalWords(){
+       ArrayList<Integer>  wordCounts.values();
+    }
 
-    public double uniqueWordRatio() {
-        // TODO: Implement this method
-        return 0.0;
+    public double uniqueWordRatio(){
+
+            int numUniqueWords = wordCounts.keySet().size();
+        return numUniqueWords/totalWordCount;
     }
 
     public double hapaxLegomanaRatio() {
-        // TODO: Implement this method
+           double countExactlyOnce = 0.0;
+
+           ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
+           while(counts.contains(1)){
+
+           }
         return 0.0;
     }
 
