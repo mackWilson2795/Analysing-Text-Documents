@@ -12,6 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.BreakIterator;
 import java.util.Scanner;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class Document {
 String doc_ID;
@@ -45,14 +48,20 @@ Double totalWordCount = 0.0;
     /* ------- Task 0 ------- */
     /*  all the basic things  */
 
-    /**
-     * Create a new document using a URL
-     * @param docId the document identifier
-     * @param docURL the URL with the contents of the document
-     */
     public Document(String docId, URL docURL) {
         doc_ID = docId;
-
+        try {
+            StringBuilder data = new StringBuilder();
+            Scanner urlScanner = new Scanner(docURL.openStream());
+            while (urlScanner.hasNext()) {
+                data.append(urlScanner.nextLine());
+                data.append(" ");
+            }
+            document = data.toString();
+        }
+        catch (IOException ioe) {
+            System.out.println("Problem reading file!");
+        }
     }
 
     /**
@@ -63,19 +72,19 @@ Double totalWordCount = 0.0;
      */
     public Document(String docId, String fileName) {
         doc_ID = docId;
-        StringBuilder seed = new StringBuilder();
 
         try {
-            Scanner docScanner = new Scanner(new FileReader(fileName));
-            while (docScanner.hasNext()){
-                seed.append(docScanner.nextLine());
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            for (String fileLine = reader.readLine();
+                 fileLine != null;
+                 fileLine = reader.readLine()) {
+                System.out.println(fileLine);
             }
-        } catch (FileNotFoundException ioe) {
-            System.out.println("Error reading file.");
+            reader.close();
         }
-
-        document = seed.toString();
-        wordCounts = instanceCounter(document);
+        catch (IOException ioe) {
+            System.out.println("Problem reading file!");
+        }
     }
 
     /**
