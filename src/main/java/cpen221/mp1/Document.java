@@ -17,13 +17,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class Document {
-String doc_ID;
-String document;
-HashMap<String, Integer> wordCounts;
-Double totalWordCount = 0.0;
+    String doc_ID;
+    String document;
+    HashMap<String, Integer> wordCounts;
+    Double totalWordCount = 0.0;
 
 
-    private HashMap <String, Integer> instanceCounter(String seed){
+    private HashMap<String, Integer> instanceCounter(String seed) {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
         BreakIterator wordIterator = BreakIterator.getWordInstance();
         wordIterator.setText(seed);
@@ -33,16 +33,15 @@ Double totalWordCount = 0.0;
             String word = document.substring(start, end);
 
             if (wordMap.containsKey(word)) {
-            int count = wordMap.get(word);
-            wordMap.replace(word, count++);
-            }
-            else{
+                int count = wordMap.get(word);
+                wordMap.replace(word, count++);
+            } else {
                 wordMap.put(word, 1);
             }
             totalWordCount++;
             start = end;
         }
-              return wordCounts;
+        return wordCounts;
     }
 //private final String cleanDoc;
     /* ------- Task 0 ------- */
@@ -58,15 +57,13 @@ Double totalWordCount = 0.0;
                 data.append(" ");
             }
             document = data.toString();
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
     }
 
     /**
-     *
-     * @param docId the document identifier
+     * @param docId    the document identifier
      * @param fileName the name of the file with the contents of
      *                 the document
      */
@@ -81,23 +78,23 @@ Double totalWordCount = 0.0;
                 System.out.println(fileLine);
             }
             reader.close();
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
     }
+}
 
     /**
      * Obtain the identifier for this document
      * @return the identifier for this document
      */
-    public String getDocId() {
+  /*  public String getDocId() {
         // TODO: Implement this method
         return null;
     }
 
     /* ------- Task 1 ------- */
-
+/*
     public double averageWordLength() {
         BreakIterator iterator = BreakIterator.getWordInstance();
         iterator.setText(document);
@@ -105,15 +102,18 @@ Double totalWordCount = 0.0;
         int wordCount = 0;
         double charCount = 0.0;
 
-        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()){
+        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()) {
             String word = document.substring(start, end);
 
             charCount += word.length();
             wordCount++;
             start = end;
-        return 0.0;
-    }
-    private int totalWords(){
+            return 0.0;
+        }
+
+    } //remove
+    /*private int totalWords(){
+
        ArrayList<Integer>  wordCounts.values();
     }
 
@@ -139,7 +139,7 @@ Double totalWordCount = 0.0;
      * Obtain the number of sentences in the document
      * @return the number of sentences in the document
      */
-    public int numSentences() {
+    /* public int numSentences() {
         // TODO: Implement this method
         return 0;
     }
@@ -152,7 +152,7 @@ Double totalWordCount = 0.0;
      * {@code 1 <= sentence_number <= this.getSentenceCount()}
      * @return the sentence indexed by {@code sentence_number}
      */
-    public String getSentence(int sentence_number) {
+    /*public String getSentence(int sentence_number) {
         // TODO: Implement this method
         return null;
     }
@@ -182,7 +182,7 @@ Double totalWordCount = 0.0;
 
 //    This approach illustrates how to keep classes small and yet
 //    highly functional.
-
+/*
     /**
      * Obtain the sentence with the most positive sentiment in the document
      * @return the sentence with the most positive sentiment in the
@@ -191,7 +191,7 @@ Double totalWordCount = 0.0;
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a positive sentiment
      */
-    public String getMostPositiveSentence() throws NoSuitableSentenceException {
+ /*   public String getMostPositiveSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
         return null;
     }
@@ -204,9 +204,10 @@ Double totalWordCount = 0.0;
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a negative sentiment
      */
-    public String getMostNegativeSentence() throws NoSuitableSentenceException {
+  /*  public String getMostNegativeSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
         return null;
     }
 
 }
+*/
