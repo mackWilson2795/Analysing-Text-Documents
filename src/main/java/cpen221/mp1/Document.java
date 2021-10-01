@@ -16,13 +16,12 @@ import java.text.BreakIterator;
 import java.util.Scanner;
 
 public class Document {
-String doc_ID;
-String document;
-HashMap<String, Integer> wordCounts;
-int totalWordCount = 0;
-int totalNumSentences;
-ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
-
+    String doc_ID;
+    String document;
+    HashMap<String, Integer> wordCounts;
+    int totalWordCount = 0;
+    int totalNumSentences;
+    ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
 
 
 //private final String cleanDoc;
@@ -31,7 +30,8 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
 
     /**
      * Create a new document using a URL
-     * @param docId the document identifier
+     *
+     * @param docId  the document identifier
      * @param docURL the URL with the contents of the document
      */
     public Document(String docId, URL docURL) {
@@ -40,8 +40,7 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
     }
 
     /**
-     *
-     * @param docId the document identifier
+     * @param docId    the document identifier
      * @param fileName the name of the file with the contents of
      *                 the document
      */
@@ -51,7 +50,7 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
 
         try {
             Scanner docScanner = new Scanner(new FileReader(fileName));
-            while (docScanner.hasNext()){
+            while (docScanner.hasNext()) {
                 seed.append(docScanner.nextLine());
             }
         } catch (FileNotFoundException ioe) {
@@ -61,18 +60,18 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
         document = seed.toString();
         wordCounts = instanceCounter(document);
     }
-    private HashMap <String, Integer> instanceCounter(String seed){
+
+    private HashMap<String, Integer> instanceCounter(String seed) {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-       ArrayList<String> sentence = new ArrayList<String>();
+        ArrayList<String> sentence = new ArrayList<String>();
         for (int i = 0; i < doc_array.size(); i++) {
             sentence = doc_array.get(i);
-            for(int k=0; k < sentence.size(); k++) {
+            for (int k = 0; k < sentence.size(); k++) {
                 String word = sentence.get(k);
                 if (wordMap.containsKey(word)) {
                     int count = wordMap.get(word);
                     wordMap.replace(word, count++);
-                }
-                else{
+                } else {
                     wordMap.put(word, 1);
                 }
                 totalWordCount++;
@@ -90,10 +89,9 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
     /**
      * @param
      */
-    private ArrayList<ArrayList<String>> breakdown{String seed}}
+
 
     /* ------- Task 1 ------- */
-
     public double averageWordLength() {
         int wordCount = 0;
         int charCount = 0;
@@ -105,37 +103,40 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
                 charCount += word.length();
             }
         }
-        return charCount/totalWordCount;
+        return charCount / totalWordCount;
     }
-    public double totalWords() {
-            List<Integer> values = new ArrayList<Integer>(wordCounts.values());
-            return (totalWordCount);
-        }
 
-    public double uniqueWordRatio(){
+    public double totalWords() {
+        List<Integer> values = new ArrayList<Integer>(wordCounts.values());
+        return (totalWordCount);
+    }
+
+    public double uniqueWordRatio() {
 
         int numUniqueWords = wordCounts.keySet().size();
-        return numUniqueWords/totalWordCount;}
+        return numUniqueWords / totalWordCount;
+    }
 
     public double hapaxLegomanaRatio() {
-           ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
-           int countExactlyOnce = 0;
-           for(int i = 0; i < counts.size(); i++){
-               if(counts.get(i)==1){
-                   countExactlyOnce++;
-               }
-           }
-        return countExactlyOnce/totalWordCount;
+        ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
+        int countExactlyOnce = 0;
+        for (int i = 0; i < counts.size(); i++) {
+            if (counts.get(i) == 1) {
+                countExactlyOnce++;
+            }
+        }
+        return countExactlyOnce / totalWordCount;
     }
 
     /* ------- Task 2 ------- */
 
     /**
      * Obtain the number of sentences in the document
+     *
      * @return the number of sentences in the document
      */
     public int numSentences() {
-       int size = doc_array.size();
+        int size = doc_array.size();
         return size;
     }
 
@@ -144,7 +145,7 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
      * Sentences are numbered starting from 1.
      *
      * @param sentence_number the position of the sentence to retrieve,
-     * {@code 1 <= sentence_number <= this.getSentenceCount()}
+     *                        {@code 1 <= sentence_number <= this.getSentenceCount()}
      * @return the sentence indexed by {@code sentence_number}
      */
     public String getSentence(int sentence_number) {
@@ -152,7 +153,7 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
         String word;
         ArrayList<String> sentence = new ArrayList<String>();
         int size = sentence.size();
-        for (int i = 0; i < size; i++ ){
+        for (int i = 0; i < size; i++) {
             word = sentence.get(i);
             sentenceString.append(word);
         }
@@ -163,27 +164,26 @@ ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
         ArrayList<String> sentence = new ArrayList<String>();
         int counter = 0;
         int sentenceLength = 0;
-        while(counter < doc_array.size()){
+        while (counter < doc_array.size()) {
             sentence = doc_array.get(counter);
             sentenceLength += sentence.size();
             counter++;
         }
-        return sentenceLength/counter;
+        return sentenceLength / counter;
     }
 
-    private int numPhrase (ArrayList<String>){
-        return 1;
-    }
+
     public double averageSentenceComplexity() {
         ArrayList<String> sentence = new ArrayList<String>();
         int counter = 0;
         int complexity = 0;
-        while(counter<doc_array.size()){
+        while (counter < doc_array.size()) {
             sentence = doc_array.get(counter);
-            complexity +=sentence.numPhrase;
+            complexity += sentence.numPhrase;
         }
-        return complexity/counter;
+        return complexity / counter;
     }
+}
 
     /* ------- Task 3 ------- */
 
