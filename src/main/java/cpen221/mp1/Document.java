@@ -15,37 +15,15 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.text.BreakIterator;
+import java.util.Locale;
 
 public class Document {
     String doc_ID;
-    String document;
-    HashMap<String, Integer> wordCounts;
-    Double totalWordCount = 0.0;
+    public String document;
+    private ArrayList<String> Sentences = new ArrayList<String>();
 
-
-    private HashMap<String, Integer> instanceCounter(String seed) {
-        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-        BreakIterator wordIterator = BreakIterator.getWordInstance();
-        wordIterator.setText(seed);
-        int start = wordIterator.first();
-        int end = wordIterator.next();
-        for (end = wordIterator.next(); end != BreakIterator.DONE; end = wordIterator.next()) {
-            String word = document.substring(start, end);
-
-            if (wordMap.containsKey(word)) {
-                int count = wordMap.get(word);
-                wordMap.replace(word, count++);
-            } else {
-                wordMap.put(word, 1);
-            }
-            totalWordCount++;
-            start = end;
-        }
-        return wordCounts;
-    }
-//private final String cleanDoc;
-    /* ------- Task 0 ------- */
-    /*  all the basic things  */
+    //try reconsidering the data structure, lock and key would be easier since we make map index as key using the break iterator
 
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -57,13 +35,21 @@ public class Document {
                 data.append(" ");
             }
             document = data.toString();
-        } catch (IOException ioe) {
+
+            document = formatString(document);
+        }
+        catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
+
+        Sentences = WordReader.SentenceBreak(document);
     }
 
+    //Title Should be its own sentence!!!!!
+
     /**
-     * @param docId    the document identifier
+     *
+     * @param docId the document identifier
      * @param fileName the name of the file with the contents of
      *                 the document
      */
@@ -72,64 +58,73 @@ public class Document {
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            for (String fileLine = reader.readLine();
-                 fileLine != null;
-                 fileLine = reader.readLine()) {
-                System.out.println(fileLine);
+            StringBuilder data = new StringBuilder();
+            for (String fileLine = reader.readLine(); fileLine != null; fileLine = reader.readLine()) {
+                data.append(fileLine);
+                data.append(" ");
             }
+
+            document = data.toString();
+
+            document = formatString(document);
             reader.close();
-        } catch (IOException ioe) {
+            document = formatString(document);
+        }
+        catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
-    }
-}
 
-    /**
-     * Obtain the identifier for this document
-     * @return the identifier for this document
-     */
-  /*  public String getDocId() {
-        // TODO: Implement this method
-        return null;
+        Sentences = WordReader.SentenceBreak(document);
+    }
+
+    private String formatString(String document){
+        String formattedDoc = document;
+
+        while (formattedDoc.contains("  ")){
+            formattedDoc = formattedDoc.replaceAll("  "," ");
+        }
+        while (formattedDoc.contains("\n")){
+            formattedDoc = formattedDoc.replaceAll("\n","");
+        }
+        while (formattedDoc.contains("\t")){
+            formattedDoc = formattedDoc.replaceAll("\t"," ");
+        }
+
+
+        return formattedDoc;
+    }
+
+
+    public void getSentences(){
+
+        for (int i = 0; i < Sentences.size(); i++){
+
+            System.out.println( i + " | " + Sentences.get(i));
+
+        }
+
     }
 
     /* ------- Task 1 ------- */
-/*
+
     public double averageWordLength() {
-        BreakIterator iterator = BreakIterator.getWordInstance();
-        iterator.setText(document);
-        int start = iterator.first();
-        int wordCount = 0;
-        double charCount = 0.0;
 
-        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()) {
-            String word = document.substring(start, end);
 
-            charCount += word.length();
-            wordCount++;
-            start = end;
-            return 0.0;
-        }
-
-    } //remove
-    /*private int totalWords(){
-
-       ArrayList<Integer>  wordCounts.values();
+        // TODO: Implement this method
+        return 0.0;
     }
 
-    public double uniqueWordRatio(){
+    public double uniqueWordRatio() {
+        // TODO: Implement this method
 
-            int numUniqueWords = wordCounts.keySet().size();
-        return numUniqueWords/totalWordCount;
+        //hashtable
+
+
+        return 0.0;
     }
 
     public double hapaxLegomanaRatio() {
-           double countExactlyOnce = 0.0;
-
-           ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
-           while(counts.contains(1)){
-
-           }
+        // TODO: Implement this method
         return 0.0;
     }
 
@@ -139,8 +134,8 @@ public class Document {
      * Obtain the number of sentences in the document
      * @return the number of sentences in the document
      */
-    /* public int numSentences() {
-        // TODO: Implement this method
+    public int numSentences() {
+
         return 0;
     }
 
@@ -152,7 +147,7 @@ public class Document {
      * {@code 1 <= sentence_number <= this.getSentenceCount()}
      * @return the sentence indexed by {@code sentence_number}
      */
-    /*public String getSentence(int sentence_number) {
+    public String getSentence(int sentence_number) {
         // TODO: Implement this method
         return null;
     }
@@ -167,47 +162,47 @@ public class Document {
         return 0.0;
     }
 
-    /* ------- Task 3 ------- */
+    public String toString(){
 
-//    To implement these methods while keeping the class
-//    small in terms of number of lines of code,
-//    implement the methods fully in sentiments.SentimentAnalysis
-//    and call those methods here. Use the getSentence() method
-//    implemented in this class when you implement the methods
-//    in the SentimentAnalysis class.
+        return document;
 
-//    Further, avoid using the Google Cloud AI multiple times for
-//    the same document. Save the results (cache them) for
-//    reuse in this class.
+    }
+}
 
-//    This approach illustrates how to keep classes small and yet
-//    highly functional.
-/*
-    /**
-     * Obtain the sentence with the most positive sentiment in the document
-     * @return the sentence with the most positive sentiment in the
-     * document; when multiple sentences share the same sentiment value
-     * returns the sentence that appears later in the document
-     * @throws NoSuitableSentenceException if there is no sentence that
-     * expresses a positive sentiment
-     */
- /*   public String getMostPositiveSentence() throws NoSuitableSentenceException {
-        // TODO: Implement this method
-        return null;
+class WordReader{
+
+    private static int wordCount;
+
+    public static ArrayList<String> SentenceBreak(String text){
+
+        wordCount = 0;
+
+        ArrayList<String> sentences = new ArrayList<String>();
+        BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+        iterator.setText(text);
+
+
+        int start = iterator.first();
+        for (int end = iterator.next();
+             end != BreakIterator.DONE;
+             start = end, end = iterator.next()) {
+
+            String sentence = text.substring(start, end);
+            sentences.add(sentence);
+            wordCount++;
+        }
+
+        return sentences;
     }
 
-    /**
-     * Obtain the sentence with the most negative sentiment in the document
-     * @return the sentence with the most negative sentiment in the document;
-     * when multiple sentences share the same sentiment value, returns the
-     * sentence that appears later in the document
-     * @throws NoSuitableSentenceException if there is no sentence that
-     * expresses a negative sentiment
-     */
-  /*  public String getMostNegativeSentence() throws NoSuitableSentenceException {
-        // TODO: Implement this method
-        return null;
+    public static int getcount(){
+
+        return wordCount;
+
     }
+
+
+
+
 
 }
-*/
