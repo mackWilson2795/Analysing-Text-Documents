@@ -113,17 +113,17 @@ public class Document {
     }
 
     public double uniqueWordRatio(){
-            int numUniqueWords = wordCounts.keySet().size();
+        int numUniqueWords = wordCounts.keySet().size();
         return numUniqueWords/totalWordCount;
     }
 
     public double hapaxLegomanaRatio() {
-           double countExactlyOnce = 0.0;
+        double countExactlyOnce = 0.0;
 
-           ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
-           while(counts.contains(1)){
+        ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
+        while(counts.contains(1)){
 
-           }
+        }
         return 0.0;
     }
 
