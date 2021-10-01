@@ -1,5 +1,6 @@
 package cpen221.mp1;
 
+import com.google.cloud.language.v1.Sentence;
 import cpen221.mp1.exceptions.NoSuitableSentenceException;
 import cpen221.mp1.sentiments.SentimentAnalysis;
 import org.checkerframework.checker.units.qual.A;
@@ -20,8 +21,8 @@ public class Document {
     String document;
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
-    int totalNumSentences;
-    ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
+    int totalNumSentences = 0;
+    ArrayList<Sentence> doc_array = new ArrayList<Sentence>();
 
 
 //private final String cleanDoc;
@@ -63,7 +64,7 @@ public class Document {
 
     private HashMap<String, Integer> instanceCounter(String seed) {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-        ArrayList<String> sentence = new ArrayList<String>();
+        Sentence sentence = new Sentence();
         for (int i = 0; i < doc_array.size(); i++) {
             sentence = doc_array.get(i);
             for (int k = 0; k < sentence.size(); k++) {
@@ -95,7 +96,7 @@ public class Document {
     public double averageWordLength() {
         int wordCount = 0;
         int charCount = 0;
-        ArrayList<String> sentence = new ArrayList<String>();
+        Sentence sentence = new Sentence();
         for (int i = 0; i < doc_array.size(); i++) {
             sentence = doc_array.get(i);
             for (int k = 0; k < sentence.size(); k++) {
@@ -179,7 +180,7 @@ public class Document {
         int complexity = 0;
         while (counter < doc_array.size()) {
             sentence = doc_array.get(counter);
-            complexity += sentence.numPhrase;
+            complexity += sentence.numPhrases;
         }
         return complexity / counter;
     }
