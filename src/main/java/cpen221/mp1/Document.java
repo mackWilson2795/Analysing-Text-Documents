@@ -19,6 +19,7 @@ import java.io.FileReader;
 public class Document {
     String doc_ID;
     String document;
+    ArrayList<Sentence> doc_array;
     HashMap<String, Integer> wordCounts;
     Double totalWordCount = 0.0;
 
