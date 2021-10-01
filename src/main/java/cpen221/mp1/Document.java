@@ -1,26 +1,26 @@
 package cpen221.mp1;
 
 import cpen221.mp1.exceptions.NoSuitableSentenceException;
-import cpen221.mp1.sentiments.SentimentAnalysis;
 
 import java.net.URL;
-import java.text.CharacterIterator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.BreakIterator;
-import java.util.Scanner;
 
 public class Document {
-String doc_ID;
-String document;
-HashMap<String, Integer> wordCounts;
-Double totalWordCount = 0.0;
+    String doc_ID;
+    String document;
+    HashMap<String, Integer> wordCounts;
+    Double totalWordCount = 0.0;
 
+    public static final Set<Character> SYMBOLS = Set.of(' ', '!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
+            '/', ':', '"', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~');
+    public static final char HASH_TAG = '#';
+    public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
+    public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
-    private HashMap <String, Integer> instanceCounter(String seed){
+    private HashMap<String, Integer> instanceCounter(String seed) {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
         BreakIterator wordIterator = BreakIterator.getWordInstance();
         wordIterator.setText(seed);
@@ -30,24 +30,25 @@ Double totalWordCount = 0.0;
             String word = document.substring(start, end);
 
             if (wordMap.containsKey(word)) {
-            int count = wordMap.get(word);
-            wordMap.replace(word, count++);
-            }
-            else{
+                int count = wordMap.get(word);
+                wordMap.replace(word, count++);
+            } else {
                 wordMap.put(word, 1);
             }
             totalWordCount++;
             start = end;
         }
-              return wordCounts;
+        return wordCounts;
     }
+
 //private final String cleanDoc;
     /* ------- Task 0 ------- */
     /*  all the basic things  */
 
     /**
      * Create a new document using a URL
-     * @param docId the document identifier
+     *
+     * @param docId  the document identifier
      * @param docURL the URL with the contents of the document
      */
     public Document(String docId, URL docURL) {
@@ -56,8 +57,7 @@ Double totalWordCount = 0.0;
     }
 
     /**
-     *
-     * @param docId the document identifier
+     * @param docId    the document identifier
      * @param fileName the name of the file with the contents of
      *                 the document
      */
@@ -67,7 +67,7 @@ Double totalWordCount = 0.0;
 
         try {
             Scanner docScanner = new Scanner(new FileReader(fileName));
-            while (docScanner.hasNext()){
+            while (docScanner.hasNext()) {
                 seed.append(docScanner.nextLine());
             }
         } catch (FileNotFoundException ioe) {
@@ -80,6 +80,7 @@ Double totalWordCount = 0.0;
 
     /**
      * Obtain the identifier for this document
+     *
      * @return the identifier for this document
      */
     public String getDocId() {
@@ -96,20 +97,22 @@ Double totalWordCount = 0.0;
         int wordCount = 0;
         double charCount = 0.0;
 
-        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()){
+        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()) {
             String word = document.substring(start, end);
 
             charCount += word.length();
             wordCount++;
             start = end;
+        }
         return 0.0;
     }
+
+
     private int totalWords(){
-       ArrayList<Integer>  wordCounts.values();
+        return -1;
     }
 
     public double uniqueWordRatio(){
-
             int numUniqueWords = wordCounts.keySet().size();
         return numUniqueWords/totalWordCount;
     }
