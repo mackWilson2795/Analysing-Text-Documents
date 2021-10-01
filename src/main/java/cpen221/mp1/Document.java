@@ -1,9 +1,17 @@
 package cpen221.mp1;
 
+import com.google.cloud.language.v1.Sentence;
 import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
+import cpen221.mp1.sentiments.SentimentAnalysis;
+import org.checkerframework.checker.units.qual.A;
+
 import java.net.URL;
-import java.util.*;
+import java.text.CharacterIterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.BreakIterator;
@@ -12,34 +20,9 @@ public class Document {
     String doc_ID;
     String document;
     HashMap<String, Integer> wordCounts;
-    Double totalWordCount = 0.0;
-
-    public static final Set<Character> SYMBOLS = Set.of(' ', '!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
-            '/', ':', '"', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~');
-    public static final char HASH_TAG = '#';
-    public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
-    public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
-
-    private HashMap<String, Integer> instanceCounter(String seed) {
-        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-        BreakIterator wordIterator = BreakIterator.getWordInstance();
-        wordIterator.setText(seed);
-        int start = wordIterator.first();
-        int end = wordIterator.next();
-        for (end = wordIterator.next(); end != BreakIterator.DONE; end = wordIterator.next()) {
-            String word = document.substring(start, end);
-
-            if (wordMap.containsKey(word)) {
-                int count = wordMap.get(word);
-                wordMap.replace(word, count++);
-            } else {
-                wordMap.put(word, 1);
-            }
-            totalWordCount++;
-            start = end;
-        }
-        return wordCounts;
-    }
+    int totalWordCount = 0;
+    int totalNumSentences = 0;
+    ArrayList<Sentence> doc_array = new ArrayList<Sentence>();
 
 //private final String cleanDoc;
     /* ------- Task 0 ------- */
@@ -78,23 +61,45 @@ public class Document {
         wordCounts = instanceCounter(document);
     }
 
+
     /**
      * Obtain the identifier for this document
      *
      * @return the identifier for this document
      */
-    public String getDocId() {
-        // TODO: Implement this method
-        return null;
+    private HashMap<String, Integer> instanceCounter(String seed) {
+        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
+        Sentence sentence = new Sentence();
+        for (int i = 0; i < doc_array.size(); i++) {
+            sentence = doc_array.get(i);
+            for (int k = 0; k < sentence.size(); k++) {
+                String word = sentence.get(k);
+                if (wordMap.containsKey(word)) {
+                    int count = wordMap.get(word);
+                    wordMap.replace(word, count++);
+                } else {
+                    wordMap.put(word, 1);
+                }
+                totalWordCount++;
+            }
+        }
+        return wordCounts;
     }
 
-    /* ------- Task 1 ------- */
+    public String getDocId() {
 
+        return doc_ID;
+    }
+
+    /**
+     * @param
+     */
+
+
+    /* ------- Task 1 ------- */
     public double averageWordLength() {
-        BreakIterator iterator = BreakIterator.getWordInstance();
-        iterator.setText(document);
-        int start = iterator.first();
         int wordCount = 0;
+
         double charCount = 0.0;
 
         for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()) {
@@ -125,17 +130,52 @@ public class Document {
 
         }
         return 0.0;
+
+        int charCount = 0;
+        Sentence sentence = new Sentence();
+        for (int i = 0; i < doc_array.size(); i++) {
+            sentence = doc_array.get(i);
+            for (int k = 0; k < sentence.size(); k++) {
+                String word = sentence.get(k);
+                charCount += word.length();
+            }
+        }
+        return charCount / totalWordCount;
+    }
+
+    public double totalWords() {
+        List<Integer> values = new ArrayList<Integer>(wordCounts.values());
+        return (totalWordCount);
+    }
+
+    public double uniqueWordRatio() {
+
+        int numUniqueWords = wordCounts.keySet().size();
+        return numUniqueWords / totalWordCount;
+    }
+
+    public double hapaxLegomanaRatio() {
+        ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
+        int countExactlyOnce = 0;
+        for (int i = 0; i < counts.size(); i++) {
+            if (counts.get(i) == 1) {
+                countExactlyOnce++;
+            }
+        }
+        return countExactlyOnce / totalWordCount;
+
     }
 
     /* ------- Task 2 ------- */
 
     /**
      * Obtain the number of sentences in the document
+     *
      * @return the number of sentences in the document
      */
     public int numSentences() {
-        // TODO: Implement this method
-        return 0;
+        int size = doc_array.size();
+        return size;
     }
 
     /**
@@ -143,23 +183,45 @@ public class Document {
      * Sentences are numbered starting from 1.
      *
      * @param sentence_number the position of the sentence to retrieve,
-     * {@code 1 <= sentence_number <= this.getSentenceCount()}
+     *                        {@code 1 <= sentence_number <= this.getSentenceCount()}
      * @return the sentence indexed by {@code sentence_number}
      */
     public String getSentence(int sentence_number) {
-        // TODO: Implement this method
-        return null;
+        StringBuilder sentenceString = new StringBuilder();
+        String word;
+        ArrayList<String> sentence = new ArrayList<String>();
+        int size = sentence.size();
+        for (int i = 0; i < size; i++) {
+            word = sentence.get(i);
+            sentenceString.append(word);
+        }
+        return sentenceString.toString();
     }
 
     public double averageSentenceLength() {
-        // TODO: Implement this method
-        return 0.0;
+        ArrayList<String> sentence = new ArrayList<String>();
+        int counter = 0;
+        int sentenceLength = 0;
+        while (counter < doc_array.size()) {
+            sentence = doc_array.get(counter);
+            sentenceLength += sentence.size();
+            counter++;
+        }
+        return sentenceLength / counter;
     }
 
+
     public double averageSentenceComplexity() {
-        // TODO: Implement this method
-        return 0.0;
+        ArrayList<String> sentence = new ArrayList<String>();
+        int counter = 0;
+        int complexity = 0;
+        while (counter < doc_array.size()) {
+            sentence = doc_array.get(counter);
+            complexity += sentence.numPhrases;
+        }
+        return complexity / counter;
     }
+}
 
     /* ------- Task 3 ------- */
 
@@ -185,7 +247,7 @@ public class Document {
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a positive sentiment
      */
-    public String getMostPositiveSentence() throws NoSuitableSentenceException {
+   /* public String getMostPositiveSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
         return null;
     }
@@ -198,9 +260,9 @@ public class Document {
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a negative sentiment
      */
-    public String getMostNegativeSentence() throws NoSuitableSentenceException {
+   /* public String getMostNegativeSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
-        return null;
+       //return null;
     }
 
 }
