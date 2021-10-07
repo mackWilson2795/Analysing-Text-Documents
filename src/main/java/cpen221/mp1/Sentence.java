@@ -2,12 +2,13 @@ package cpen221.mp1;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import static cpen221.mp1.Document.*;
 
 public class Sentence {
 
-    private ArrayList<Word> sentence;
+    private final ArrayList<Word> sentence = new ArrayList<>();
     private int phrases;
     private int length;
 
@@ -16,39 +17,72 @@ public class Sentence {
      * @param seed
      */
     public Sentence(String seed){
-        String sentenceSeed = formatSentence(seed);
-        BreakIterator iterator = BreakIterator.getWordInstance();
-        iterator.setText(sentenceSeed);
-        int start = iterator.first();
-        // TODO: Is this correct ???
-        phrases = 1;
+        StringTokenizer tokenizer = new StringTokenizer(seed, " ");
+        boolean phraseBroken = false;
 
-        for (int end = iterator.next(); end != BreakIterator.DONE; start=end, end = iterator.next()){
-            String word = seed.substring(start, end);
+        while (tokenizer.hasMoreTokens()){
+            String nextToken = tokenizer.nextToken();
+            int i = 0;
+            int j = nextToken.length();
 
-            if (word.equals(" ")) {
-                continue;
+            try {
+                while (SYMBOLS.contains(nextToken.charAt(i))){
+                    if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
+                        phraseBroken = true;
+                        break;
+                    }
+                    i++;
+                }
+
+                Word nextWord = new Word(nextToken);
+                sentence.add(nextWord);
+                
+                if (phraseBroken) {
+                    phrases++;
+                    phraseBroken = false;
+                }
+
+                while (SYMBOLS.contains(nextToken.charAt(j - 1))){
+                    if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
+                        phraseBroken = true;
+                        break;
+                    }
+                    j--;
+                }
+            } catch (IllegalArgumentException ignored) {
+                /*
+                Token was an invalid word - no action needed.
+                 */
             }
-            if (word.contains(PHRASE_BREAKERS.get(0).toString()) || word.contains(PHRASE_BREAKERS.get(1).toString()) || word.contains(PHRASE_BREAKERS.get(2).toString())){
-                // TODO: Decide how to break phrases - should ',' in a word break it
-                phrases++;
-                continue;
-            }
-            sentence.add(new Word(word));
+
+            length = sentence.size();
         }
+
     }
 
-    /*
-    private void getNextWord (int start, int end){
-        //TODO: make this
-    }
+    /**
+     *
+     * @return
      */
+    public String getSentence(){
+        StringBuilder builder = new StringBuilder();
 
-    /*
-    private ArrayList<Word> toArrayList(){
-        //TODO: make this
+        for (int i = 0; i < length; i++){
+            builder.append(this.getWord(i));
+            builder.append(" ");
+        }
+
+        return builder.toString();
     }
+
+    /**
+     *
+     * @param index
+     * @return
      */
+    private String getWord(int index){
+        return sentence.get(index).toString();
+    }
 
     /**
      *
@@ -62,10 +96,12 @@ public class Sentence {
      *
      * @return
      */
-    public int getLength(){
+    public int getSentenceLength(){
         return length;
     }
 
+
+    // TODO: can combine two methods into one????
     /**
      *
      * @param toFormat
@@ -76,9 +112,17 @@ public class Sentence {
         builder.append(toFormat);
 
         while (SYMBOLS.contains(builder.charAt(0))) {
-            builder.deleteCharAt(0);
+            if (builder.charAt(0) == HASH_TAG){
+                if (SYMBOLS.contains(builder.charAt(1))){
+                    builder.deleteCharAt(0);
+                } else {
+                    break;
+                }
+            } else {
+                builder.deleteCharAt(0);
+            }
         }
-        while (SYMBOLS.contains(builder.charAt(builder.length() - 1)) || builder.charAt(0) == HASH_TAG) {
+        while (SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
             builder.deleteCharAt(builder.length() - 1);
         }
 
