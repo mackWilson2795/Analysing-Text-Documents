@@ -8,15 +8,18 @@ import org.checkerframework.checker.units.qual.A;
 
 import java.net.URL;
 import java.text.CharacterIterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.BreakIterator;
 
 public class Document {
+    public static final Set<Character> SYMBOLS = Set.of('!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
+            '/', ':', '"', ';', '<', '=', '>', '?', '@', '[', '\\', ' ', ']', '^', '_', '`', '{', '|', '}', '~', '#');
+    public static final char HASH_TAG = '#';
+    public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
+    public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
+
     String doc_ID;
     String document;
     HashMap<String, Integer> wordCounts;
@@ -100,47 +103,7 @@ public class Document {
     public double averageWordLength() {
         int wordCount = 0;
 
-        double charCount = 0.0;
-
-        for (int end = iterator.next(); end != BreakIterator.DONE; end = iterator.next()) {
-            String word = document.substring(start, end);
-
-            charCount += word.length();
-            wordCount++;
-            start = end;
-        }
         return 0.0;
-    }
-
-
-    private int totalWords(){
-        return -1;
-    }
-
-    public double uniqueWordRatio(){
-        int numUniqueWords = wordCounts.keySet().size();
-        return numUniqueWords/totalWordCount;
-    }
-
-    public double hapaxLegomanaRatio() {
-        double countExactlyOnce = 0.0;
-
-        ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
-        while(counts.contains(1)){
-
-        }
-        return 0.0;
-
-        int charCount = 0;
-        Sentence sentence = new Sentence();
-        for (int i = 0; i < doc_array.size(); i++) {
-            sentence = doc_array.get(i);
-            for (int k = 0; k < sentence.size(); k++) {
-                String word = sentence.get(k);
-                charCount += word.length();
-            }
-        }
-        return charCount / totalWordCount;
     }
 
     public double totalWords() {
@@ -149,9 +112,8 @@ public class Document {
     }
 
     public double uniqueWordRatio() {
-
         int numUniqueWords = wordCounts.keySet().size();
-        return numUniqueWords / totalWordCount;
+        return (double) numUniqueWords / totalWordCount;
     }
 
     public double hapaxLegomanaRatio() {
@@ -162,7 +124,7 @@ public class Document {
                 countExactlyOnce++;
             }
         }
-        return countExactlyOnce / totalWordCount;
+        return (double) countExactlyOnce / totalWordCount;
 
     }
 
@@ -221,7 +183,7 @@ public class Document {
         }
         return complexity / counter;
     }
-}
+
 
     /* ------- Task 3 ------- */
 
@@ -247,7 +209,7 @@ public class Document {
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a positive sentiment
      */
-   /* public String getMostPositiveSentence() throws NoSuitableSentenceException {
+   public String getMostPositiveSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
         return null;
     }
@@ -260,9 +222,9 @@ public class Document {
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a negative sentiment
      */
-   /* public String getMostNegativeSentence() throws NoSuitableSentenceException {
+   public String getMostNegativeSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
-       //return null;
+       return null;
     }
 
 }
