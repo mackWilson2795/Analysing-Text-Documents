@@ -14,30 +14,50 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.BreakIterator;
 import java.util.Scanner;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.text.BreakIterator;
+import java.util.Locale;
 
 public class Document {
     String doc_ID;
+
     String document;
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
     int totalNumSentences;
-    ArrayList<ArrayList<String>> doc_array = new ArrayList<ArrayList<String>>();
+    
 
 
-//private final String cleanDoc;
-    /* ------- Task 0 ------- */
-    /*  all the basic things  */
 
-    /**
-     * Create a new document using a URL
-     *
-     * @param docId  the document identifier
-     * @param docURL the URL with the contents of the document
-     */
+
+    private ArrayList<String> Sentences = new ArrayList<String>();
+
+   
+
+
     public Document(String docId, URL docURL) {
         doc_ID = docId;
+        try {
+            StringBuilder data = new StringBuilder();
+            Scanner urlScanner = new Scanner(docURL.openStream());
+            while (urlScanner.hasNext()) {
+                data.append(urlScanner.nextLine());
+                data.append(" ");
+            }
+            document = data.toString();
 
+            document = formatString(document);
+        }
+        catch (IOException ioe) {
+            System.out.println("Problem reading file!");
+        }
+
+        Sentences = WordReader.SentenceBreak(document);
     }
+
+    //Title Should be its own sentence!!!!!
 
     /**
      * @param docId    the document identifier
@@ -46,20 +66,31 @@ public class Document {
      */
     public Document(String docId, String fileName) {
         doc_ID = docId;
-        StringBuilder seed = new StringBuilder();
 
         try {
-            Scanner docScanner = new Scanner(new FileReader(fileName));
-            while (docScanner.hasNext()) {
-                seed.append(docScanner.nextLine());
+
+
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            StringBuilder data = new StringBuilder();
+            for (String fileLine = reader.readLine(); fileLine != null; fileLine = reader.readLine()) {
+                data.append(fileLine);
+                data.append(" ");
+
             }
-        } catch (FileNotFoundException ioe) {
-            System.out.println("Error reading file.");
+
+            document = data.toString();
+
+            document = formatString(document);
+            reader.close();
+            document = formatString(document);
+        }
+        catch (IOException ioe) {
+            System.out.println("Problem reading file!");
         }
 
-        document = seed.toString();
-        wordCounts = instanceCounter(document);
+        Sentences = WordReader.SentenceBreak(document);
     }
+
 
     private HashMap<String, Integer> instanceCounter(String seed) {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
@@ -84,6 +115,34 @@ public class Document {
     public String getDocId() {
 
         return doc_ID;
+
+    private String formatString(String document){
+        String formattedDoc = document;
+
+        while (formattedDoc.contains("  ")){
+            formattedDoc = formattedDoc.replaceAll("  "," ");
+        }
+        while (formattedDoc.contains("\n")){
+            formattedDoc = formattedDoc.replaceAll("\n","");
+        }
+        while (formattedDoc.contains("\t")){
+            formattedDoc = formattedDoc.replaceAll("\t"," ");
+        }
+
+
+        return formattedDoc;
+    }
+
+
+    public void getSentences(){
+
+        for (int i = 0; i < Sentences.size(); i++){
+
+            System.out.println( i + " | " + Sentences.get(i));
+
+        }
+
+
     }
 
     /**
@@ -93,6 +152,7 @@ public class Document {
 
     /* ------- Task 1 ------- */
     public double averageWordLength() {
+
         int wordCount = 0;
         int charCount = 0;
         ArrayList<String> sentence = new ArrayList<String>();
@@ -126,6 +186,9 @@ public class Document {
             }
         }
         return countExactlyOnce / totalWordCount;
+
+
+
     }
 
     /* ------- Task 2 ------- */
@@ -136,8 +199,10 @@ public class Document {
      * @return the number of sentences in the document
      */
     public int numSentences() {
+
         int size = doc_array.size();
         return size;
+
     }
 
     /**
@@ -185,21 +250,14 @@ public class Document {
     }
 }
 
-    /* ------- Task 3 ------- */
+    public String toString(){
 
-//    To implement these methods while keeping the class
-//    small in terms of number of lines of code,
-//    implement the methods fully in sentiments.SentimentAnalysis
-//    and call those methods here. Use the getSentence() method
-//    implemented in this class when you implement the methods
-//    in the SentimentAnalysis class.
+        return document;
 
-//    Further, avoid using the Google Cloud AI multiple times for
-//    the same document. Save the results (cache them) for
-//    reuse in this class.
+    }
+}
 
-//    This approach illustrates how to keep classes small and yet
-//    highly functional.
+class WordReader{
 
     /**
      * Obtain the sentence with the most positive sentiment in the document
@@ -225,6 +283,10 @@ public class Document {
    /* public String getMostNegativeSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
        //return null;
-    }
+
+
+
+
+
 
 }
