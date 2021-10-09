@@ -7,17 +7,12 @@ import cpen221.mp1.sentiments.SentimentAnalysis;
 import org.checkerframework.checker.units.qual.A;
 
 import java.net.URL;
-import java.text.CharacterIterator;
-import java.util.*;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.text.BreakIterator;
+import java.util.*;
+import java.io.FileReader;
 import java.util.Scanner;
 import java.io.IOException;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.text.BreakIterator;
-import java.util.Locale;
 
 public class Document {
     public static final Set<Character> SYMBOLS = Set.of('!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
@@ -27,18 +22,10 @@ public class Document {
     public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
     String doc_ID;
-
     String document;
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
-    ArrayList<Sentence> doc_array = new ArrayList<Sentence>();
-
-
-
-    private ArrayList<String> Sentences = new ArrayList<String>();
-
-   
-
+    ArrayList<SentenceClass> doc_array = new ArrayList<SentenceClass>();
 
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -57,10 +44,9 @@ public class Document {
             System.out.println("Problem reading file!");
         }
 
-        Sentences = WordReader.SentenceBreak(document);
+        doc_array = SentenceBreak(document);
     }
 
-    //Title Should be its own sentence!!!!!
 
     /**
      * @param docId    the document identifier
@@ -71,41 +57,54 @@ public class Document {
         doc_ID = docId;
 
         try {
-
-
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             StringBuilder data = new StringBuilder();
             for (String fileLine = reader.readLine(); fileLine != null; fileLine = reader.readLine()) {
                 data.append(fileLine);
                 data.append(" ");
-
             }
-
             document = data.toString();
 
             document = formatString(document);
             reader.close();
+            // TODO: Is this redundant?
             document = formatString(document);
         }
         catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
 
-        Sentences = WordReader.SentenceBreak(document);
+        doc_array = SentenceBreak(document);
     }
 
+    private static ArrayList<SentenceClass> SentenceBreak(String text){
+        ArrayList<SentenceClass> temporaryDocArray = new ArrayList<SentenceClass>();
+        BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
+        iterator.setText(text);
 
+        int start = iterator.first();
+        for (int end = iterator.next();
+             end != BreakIterator.DONE;
+             start = end, end = iterator.next()) {
+
+            SentenceClass nextSentence = new SentenceClass(text.substring(start, end));
+            temporaryDocArray.add(nextSentence);
+        }
+
+        return temporaryDocArray;
+    }
 
     private HashMap<String, Integer> instanceCounter(String seed) {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-        Sentence sentence = new Sentence();
+
         for (int i = 0; i < doc_array.size(); i++) {
-            sentence = doc_array.get(i);
-            for (int k = 0; k < sentence.size(); k++) {
-                String word = sentence.get(k);
+            SentenceClass currentSentence = doc_array.get(i);
+            for (int k = 0; k < currentSentence.getSentenceLength(); k++) {
+                String word = currentSentence.getWord(k);
                 if (wordMap.containsKey(word)) {
                     int count = wordMap.get(word);
-                    wordMap.replace(word, count++);
+                    count++;
+                    wordMap.replace(word, count);
                 } else {
                     wordMap.put(word, 1);
                 }
@@ -116,11 +115,11 @@ public class Document {
     }
 
     public String getDocId() {
-
         return doc_ID;
+    }
 
-    private String formatString(String document){
-        String formattedDoc = document;
+    public String formatString(String seed){
+        String formattedDoc = seed;
 
         while (formattedDoc.contains("  ")){
             formattedDoc = formattedDoc.replaceAll("  "," ");
@@ -132,38 +131,23 @@ public class Document {
             formattedDoc = formattedDoc.replaceAll("\t"," ");
         }
 
-
         return formattedDoc;
     }
 
 
-    public void getSentences(){
-
-        for (int i = 0; i < Sentences.size(); i++){
-
-            System.out.println( i + " | " + Sentences.get(i));
-
-        }
-
-
-    }
+    /* ------- Task 1 ------- */
 
     /**
-     * @param
+     *
+     * @return
      */
-
-
-    /* ------- Task 1 ------- */
     public double averageWordLength() {
-
         int wordCount = 0;
-
         return 0.0;
     }
 
     public double totalWords() {
-        List<Integer> values = new ArrayList<Integer>(wordCounts.values());
-        return (totalWordCount);
+        return totalWordCount;
     }
 
     public double uniqueWordRatio() {
@@ -179,6 +163,7 @@ public class Document {
                 countExactlyOnce++;
             }
         }
+
         return (double) countExactlyOnce / totalWordCount;
     }
 
@@ -190,10 +175,7 @@ public class Document {
      * @return the number of sentences in the document
      */
     public int numSentences() {
-
-        int size = doc_array.size();
-        return size;
-
+        return doc_array.size();
     }
 
     /**
@@ -204,6 +186,7 @@ public class Document {
      *                        {@code 1 <= sentence_number <= this.getSentenceCount()}
      * @return the sentence indexed by {@code sentence_number}
      */
+    // TODO: MACK IMPLEMENT THIS
     public String getSentence(int sentence_number) {
         StringBuilder sentenceString = new StringBuilder();
         String word;
@@ -217,68 +200,61 @@ public class Document {
     }
 
     public double averageSentenceLength() {
-        ArrayList<String> sentence = new ArrayList<String>();
         int counter = 0;
         int sentenceLength = 0;
+
         while (counter < doc_array.size()) {
-            sentence = doc_array.get(counter);
-            sentenceLength += sentence.size();
+            sentenceLength += doc_array.get(counter).getSentenceLength();
             counter++;
         }
-        return sentenceLength / counter;
+
+        return (double) sentenceLength / counter;
     }
 
 
     public double averageSentenceComplexity() {
-        ArrayList<String> sentence = new ArrayList<String>();
         int counter = 0;
         int complexity = 0;
         while (counter < doc_array.size()) {
-            sentence = doc_array.get(counter);
-            complexity += sentence.numPhrases;
+            complexity += doc_array.get(counter).numPhrases();
+            counter++;
         }
-        return complexity / counter;
+        if (counter == 0){
+            return 0;
+        }
+        return (double) complexity / counter;
     }
 
 
     public String toString(){
-
         return document;
-
     }
-}
-
-class WordReader{
 
     /**
      * Obtain the sentence with the most positive sentiment in the document
+     *
      * @return the sentence with the most positive sentiment in the
      * document; when multiple sentences share the same sentiment value
      * returns the sentence that appears later in the document
      * @throws NoSuitableSentenceException if there is no sentence that
-     * expresses a positive sentiment
+     *                                     expresses a positive sentiment
      */
-   public String getMostPositiveSentence() throws NoSuitableSentenceException {
+    public String getMostPositiveSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
         return null;
     }
 
     /**
      * Obtain the sentence with the most negative sentiment in the document
+     *
      * @return the sentence with the most negative sentiment in the document;
      * when multiple sentences share the same sentiment value, returns the
      * sentence that appears later in the document
      * @throws NoSuitableSentenceException if there is no sentence that
-     * expresses a negative sentiment
+     *                                     expresses a negative sentiment
      */
-   public String getMostNegativeSentence() throws NoSuitableSentenceException {
+    public String getMostNegativeSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
-       //return null;
-   }
-
-
-
-
-
-
+        return null;
+    }
 }

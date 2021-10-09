@@ -6,17 +6,17 @@ import java.util.StringTokenizer;
 
 import static cpen221.mp1.Document.*;
 
-public class Sentence {
+public class SentenceClass {
 
     private final ArrayList<Word> sentence = new ArrayList<>();
-    private int phrases;
+    private int phrases = 0;
     private int length;
 
     /**
      *
      * @param seed
      */
-    public Sentence(String seed){
+    public SentenceClass(String seed){
         StringTokenizer tokenizer = new StringTokenizer(seed, " ");
         boolean phraseBroken = false;
 
@@ -54,10 +54,9 @@ public class Sentence {
                 Token was an invalid word - no action needed.
                  */
             }
-
-            length = sentence.size();
         }
 
+        length = sentence.size();
     }
 
     /**
@@ -80,7 +79,7 @@ public class Sentence {
      * @param index
      * @return
      */
-    private String getWord(int index){
+    public String getWord(int index){
         return sentence.get(index).toString();
     }
 
