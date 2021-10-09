@@ -1,15 +1,14 @@
 package cpen221.mp1;
 
+import com.google.cloud.language.v1.Sentence;
 import cpen221.mp1.exceptions.NoSuitableSentenceException;
+
 import cpen221.mp1.sentiments.SentimentAnalysis;
 import org.checkerframework.checker.units.qual.A;
 
 import java.net.URL;
 import java.text.CharacterIterator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.BreakIterator;
@@ -21,14 +20,18 @@ import java.text.BreakIterator;
 import java.util.Locale;
 
 public class Document {
+    public static final Set<Character> SYMBOLS = Set.of('!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
+            '/', ':', '"', ';', '<', '=', '>', '?', '@', '[', '\\', ' ', ']', '^', '_', '`', '{', '|', '}', '~', '#');
+    public static final char HASH_TAG = '#';
+    public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
+    public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
+
     String doc_ID;
 
     String document;
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
-    int totalNumSentences;
-    
-
+    ArrayList<Sentence> doc_array = new ArrayList<Sentence>();
 
 
 
@@ -92,9 +95,10 @@ public class Document {
     }
 
 
+
     private HashMap<String, Integer> instanceCounter(String seed) {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-        ArrayList<String> sentence = new ArrayList<String>();
+        Sentence sentence = new Sentence();
         for (int i = 0; i < doc_array.size(); i++) {
             sentence = doc_array.get(i);
             for (int k = 0; k < sentence.size(); k++) {
@@ -110,7 +114,6 @@ public class Document {
         }
         return wordCounts;
     }
-
 
     public String getDocId() {
 
@@ -154,16 +157,8 @@ public class Document {
     public double averageWordLength() {
 
         int wordCount = 0;
-        int charCount = 0;
-        ArrayList<String> sentence = new ArrayList<String>();
-        for (int i = 0; i < doc_array.size(); i++) {
-            sentence = doc_array.get(i);
-            for (int k = 0; k < sentence.size(); k++) {
-                String word = sentence.get(k);
-                charCount += word.length();
-            }
-        }
-        return charCount / totalWordCount;
+
+        return 0.0;
     }
 
     public double totalWords() {
@@ -172,9 +167,8 @@ public class Document {
     }
 
     public double uniqueWordRatio() {
-
         int numUniqueWords = wordCounts.keySet().size();
-        return numUniqueWords / totalWordCount;
+        return (double) numUniqueWords / totalWordCount;
     }
 
     public double hapaxLegomanaRatio() {
@@ -185,10 +179,7 @@ public class Document {
                 countExactlyOnce++;
             }
         }
-        return countExactlyOnce / totalWordCount;
-
-
-
+        return (double) countExactlyOnce / totalWordCount;
     }
 
     /* ------- Task 2 ------- */
@@ -244,11 +235,11 @@ public class Document {
         int complexity = 0;
         while (counter < doc_array.size()) {
             sentence = doc_array.get(counter);
-            complexity += sentence.numPhrase;
+            complexity += sentence.numPhrases;
         }
         return complexity / counter;
     }
-}
+
 
     public String toString(){
 
@@ -267,7 +258,7 @@ class WordReader{
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a positive sentiment
      */
-   /* public String getMostPositiveSentence() throws NoSuitableSentenceException {
+   public String getMostPositiveSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
         return null;
     }
@@ -280,9 +271,10 @@ class WordReader{
      * @throws NoSuitableSentenceException if there is no sentence that
      * expresses a negative sentiment
      */
-   /* public String getMostNegativeSentence() throws NoSuitableSentenceException {
+   public String getMostNegativeSentence() throws NoSuitableSentenceException {
         // TODO: Implement this method
        //return null;
+   }
 
 
 
