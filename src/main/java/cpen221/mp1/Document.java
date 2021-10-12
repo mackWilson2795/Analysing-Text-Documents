@@ -1,10 +1,8 @@
 package cpen221.mp1;
 
-import com.google.cloud.language.v1.Sentence;
 import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
 import cpen221.mp1.sentiments.SentimentAnalysis;
-import org.checkerframework.checker.units.qual.A;
 
 import java.net.URL;
 import java.text.BreakIterator;
@@ -27,8 +25,8 @@ public class Document {
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
     ArrayList<SentenceClass> doc_array;
-    public float mostPositive = 0;
-    public float mostNegative = 0;
+    public int mostPositive = 0;
+    public int mostNegative = 0;
 
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -41,7 +39,7 @@ public class Document {
             }
             document = data.toString();
 
-            document = formatString(document);
+            document = formatDocument(document);
         }
         catch (IOException ioe) {
             System.out.println("Problem reading file!");
@@ -69,10 +67,10 @@ public class Document {
             }
             document = data.toString();
 
-            document = formatString(document);
+            document = formatDocument(document);
             reader.close();
             // TODO: Is this redundant?
-            document = formatString(document);
+            document = formatDocument(document);
         }
         catch (IOException ioe) {
             System.out.println("Problem reading file!");
@@ -123,7 +121,7 @@ public class Document {
         return doc_ID;
     }
 
-    public String formatString(String seed){
+    public String formatDocument(String seed){
         String formattedDoc = seed;
 
         while (formattedDoc.contains("  ")){

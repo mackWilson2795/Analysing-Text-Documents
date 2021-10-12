@@ -31,7 +31,7 @@ public class Task1SmokeTests {
     @Test
     public void testSentences() {
         Assertions.assertEquals(37, testDocument1.numSentences());
-        Assertions.assertEquals("\"We can't do that,\" they said, \"We must store away food for the winter.", testDocument2.getSentence(5));
+        Assertions.assertEquals("we can't do that,\" they said, \"we must store away food for the winter", testDocument2.getSentence(5));
     }
 
 }

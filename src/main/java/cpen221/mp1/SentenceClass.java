@@ -15,10 +15,12 @@ public class SentenceClass {
 
     /**
      *
-     * @param seed
+     * @param seed is not null and contains at least one word. BreakIterator can be used to break a text into its
+     *             constituent sentences
+     *
      */
     public SentenceClass(String seed){
-        originalString = formatText(seed);
+        originalString = formatText(seed).toLowerCase();
         StringTokenizer tokenizer = new StringTokenizer(seed.toLowerCase(), " ");
         boolean phraseBroken = false;
 
