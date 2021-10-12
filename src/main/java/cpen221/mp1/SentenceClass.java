@@ -1,6 +1,5 @@
 package cpen221.mp1;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -17,14 +16,14 @@ public class SentenceClass {
      * @param seed
      */
     public SentenceClass(String seed){
-        StringTokenizer tokenizer = new StringTokenizer(seed, " ");
+        String text = Document.formatText(seed);
+        StringTokenizer tokenizer = new StringTokenizer(text, " ");
         boolean phraseBroken = false;
 
         while (tokenizer.hasMoreTokens()){
             String nextToken = tokenizer.nextToken();
             int i = 0;
             int j = nextToken.length();
-
             try {
                 while (SYMBOLS.contains(nextToken.charAt(i))){
                     if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
@@ -36,12 +35,11 @@ public class SentenceClass {
 
                 Word nextWord = new Word(nextToken);
                 sentence.add(nextWord);
-                
+
                 if (phraseBroken) {
                     phrases++;
                     phraseBroken = false;
                 }
-
                 while (SYMBOLS.contains(nextToken.charAt(j - 1))){
                     if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
                         phraseBroken = true;
@@ -55,22 +53,20 @@ public class SentenceClass {
                  */
             }
         }
-
         length = sentence.size();
     }
 
+    @Override
     /**
      *
      * @return
      */
-    public String getSentence(){
+    public String toString(){
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < length; i++){
-            builder.append(this.getWord(i));
-            builder.append(" ");
+            builder.append(getWord(i));
         }
-
         return builder.toString();
     }
 
@@ -98,34 +94,4 @@ public class SentenceClass {
     public int getSentenceLength(){
         return length;
     }
-
-
-    // TODO: can combine two methods into one????
-    /**
-     *
-     * @param toFormat
-     * @return
-     */
-    private String formatSentence(String toFormat) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(toFormat);
-
-        while (SYMBOLS.contains(builder.charAt(0))) {
-            if (builder.charAt(0) == HASH_TAG){
-                if (SYMBOLS.contains(builder.charAt(1))){
-                    builder.deleteCharAt(0);
-                } else {
-                    break;
-                }
-            } else {
-                builder.deleteCharAt(0);
-            }
-        }
-        while (SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-
-        return builder.toString();
-    }
-
 }

@@ -21,11 +21,14 @@ public class Document {
     public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
     public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
+    // TODO: Can we make these all private??
     String doc_ID;
     String document;
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
-    ArrayList<SentenceClass> doc_array = new ArrayList<SentenceClass>();
+    ArrayList<SentenceClass> doc_array;
+    public float mostPositive = 0;
+    public float mostNegative = 0;
 
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -186,17 +189,8 @@ public class Document {
      *                        {@code 1 <= sentence_number <= this.getSentenceCount()}
      * @return the sentence indexed by {@code sentence_number}
      */
-    // TODO: MACK IMPLEMENT THIS
     public String getSentence(int sentence_number) {
-        StringBuilder sentenceString = new StringBuilder();
-        String word;
-        ArrayList<String> sentence = new ArrayList<String>();
-        int size = sentence.size();
-        for (int i = 0; i < size; i++) {
-            word = sentence.get(i);
-            sentenceString.append(word);
-        }
-        return sentenceString.toString();
+        return doc_array.get(sentence_number - 1).toString();
     }
 
     public double averageSentenceLength() {
@@ -225,9 +219,39 @@ public class Document {
         return (double) complexity / counter;
     }
 
-
+    @Override
+    /**
+     * @returns a string containing the text of a document
+     */
     public String toString(){
         return document;
+    }
+
+    /**
+     *
+     * @param toFormat
+     * @return
+     */
+    public static String formatText(String toFormat) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(toFormat);
+
+        while (SYMBOLS.contains(builder.charAt(0))) {
+            if (builder.charAt(0) == HASH_TAG){
+                if (SYMBOLS.contains(builder.charAt(1))){
+                    builder.deleteCharAt(0);
+                } else {
+                    break;
+                }
+            } else {
+                builder.deleteCharAt(0);
+            }
+        }
+        while (SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
+            builder.deleteCharAt(builder.length() - 1);
+        }
+
+        return builder.toString();
     }
 
     /**
@@ -240,8 +264,7 @@ public class Document {
      *                                     expresses a positive sentiment
      */
     public String getMostPositiveSentence() throws NoSuitableSentenceException {
-        // TODO: Implement this method
-        return null;
+        return SentimentAnalysis.getMostPositiveSentence(this);
     }
 
     /**
@@ -254,7 +277,6 @@ public class Document {
      *                                     expresses a negative sentiment
      */
     public String getMostNegativeSentence() throws NoSuitableSentenceException {
-        // TODO: Implement this method
-        return null;
+        return SentimentAnalysis.getMostNegativeSentence(this);
     }
 }
