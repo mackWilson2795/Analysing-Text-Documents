@@ -48,6 +48,7 @@ public class Document {
         }
 
         doc_array = SentenceBreak(document);
+        wordCounts = instanceCounter();
     }
 
 
@@ -78,6 +79,7 @@ public class Document {
         }
 
         doc_array = SentenceBreak(document);
+        wordCounts = instanceCounter();
     }
 
     private static ArrayList<SentenceClass> SentenceBreak(String text){
@@ -97,7 +99,7 @@ public class Document {
         return temporaryDocArray;
     }
 
-    private HashMap<String, Integer> instanceCounter(String seed) {
+    private HashMap<String, Integer> instanceCounter() {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
 
         for (int i = 0; i < doc_array.size(); i++) {
@@ -114,7 +116,7 @@ public class Document {
                 totalWordCount++;
             }
         }
-        return wordCounts;
+        return wordMap;
     }
 
     public String getDocId() {
@@ -145,12 +147,15 @@ public class Document {
      * @return
      */
     public double averageWordLength() {
-        int wordCount = 0;
-        return 0.0;
-    }
+        int totalCharCount = 0;
 
-    public double totalWords() {
-        return totalWordCount;
+        for (int i = 0; i < doc_array.size(); i++){
+            for (int j = 0; j < doc_array.get(i).getSentenceLength(); j++){
+                totalCharCount += doc_array.get(i).getWord(j).length();
+            }
+        }
+
+        return (double) totalCharCount / totalWordCount;
     }
 
     public double uniqueWordRatio() {
@@ -236,7 +241,7 @@ public class Document {
         StringBuilder builder = new StringBuilder();
         builder.append(toFormat);
 
-        while (SYMBOLS.contains(builder.charAt(0))) {
+        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(0))) {
             if (builder.charAt(0) == HASH_TAG){
                 if (SYMBOLS.contains(builder.charAt(1))){
                     builder.deleteCharAt(0);
@@ -247,7 +252,7 @@ public class Document {
                 builder.deleteCharAt(0);
             }
         }
-        while (SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
+        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
             builder.deleteCharAt(builder.length() - 1);
         }
 

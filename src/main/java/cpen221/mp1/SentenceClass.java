@@ -1,6 +1,7 @@
 package cpen221.mp1;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import static cpen221.mp1.Document.*;
@@ -8,16 +9,17 @@ import static cpen221.mp1.Document.*;
 public class SentenceClass {
 
     private final ArrayList<Word> sentence = new ArrayList<>();
-    private int phrases = 0;
+    private int phrases = 1;
     private int length;
+    private String originalString;
 
     /**
      *
      * @param seed
      */
     public SentenceClass(String seed){
-        String text = Document.formatText(seed);
-        StringTokenizer tokenizer = new StringTokenizer(text, " ");
+        originalString = formatText(seed);
+        StringTokenizer tokenizer = new StringTokenizer(seed.toLowerCase(), " ");
         boolean phraseBroken = false;
 
         while (tokenizer.hasMoreTokens()){
@@ -25,7 +27,7 @@ public class SentenceClass {
             int i = 0;
             int j = nextToken.length();
             try {
-                while (SYMBOLS.contains(nextToken.charAt(i))){
+                while (i < nextToken.length() && SYMBOLS.contains(nextToken.charAt(i))){
                     if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
                         phraseBroken = true;
                         break;
@@ -41,7 +43,7 @@ public class SentenceClass {
                     phraseBroken = false;
                 }
                 while (SYMBOLS.contains(nextToken.charAt(j - 1))){
-                    if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
+                    if (PHRASE_BREAKERS.contains(nextToken.charAt(j - 1))) {
                         phraseBroken = true;
                         break;
                     }
@@ -62,12 +64,7 @@ public class SentenceClass {
      * @return
      */
     public String toString(){
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < length; i++){
-            builder.append(getWord(i));
-        }
-        return builder.toString();
+        return originalString;
     }
 
     /**
