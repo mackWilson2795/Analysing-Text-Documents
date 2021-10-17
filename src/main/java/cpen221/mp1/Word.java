@@ -1,9 +1,5 @@
 package cpen221.mp1;
 
-import java.util.Locale;
-
-import static cpen221.mp1.Document.*;
-
 public class Word {
     private String word;
 
@@ -24,9 +20,14 @@ public class Word {
     }
 
     @Override
-    /**
+    /** Returns a string representation of the word.
+     *  This representation will be formatted such that there are no symbols or spaces before the first non-symbol,
+     *  non-space character. The following is the list of symbols:
+     *  ! " $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
+     *  There will be no hashtags that are immediately followed by any of the above symbols or another hashtag.
+     *  Any alphabetical characters in the string will be in lowercase.
      *
-     * @return
+     * @return string representation of the word.
      */
     public String toString() {
         return word;

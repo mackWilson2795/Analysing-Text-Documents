@@ -11,6 +11,12 @@ public class TextFormatters {
     public static final char HASH_TAG = '#';
     public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
+    /**
+     * Produces a List which contains every Sentence in a given Document.
+     *
+     * @param document Document to be read from
+     * @return List of every Sentence in the given Document.
+     */
     public static ArrayList<SentenceClass> sentenceList(Document document){
         ArrayList<SentenceClass> temporarySentenceArray = new ArrayList<>();
         for (int i = 1; i <= document.numSentences(); i++) {
@@ -20,8 +26,16 @@ public class TextFormatters {
         return temporarySentenceArray;
     }
 
+    /**
+     * Produces a Map where the Keys are every unique String that occur in a List of sentences
+     * and the values are the number of times that word occurs.
+     *
+     * @param sentenceList List of SentenceClass sentences
+     * @return Map with every unique String in the List of Sentences and the
+     * number of times that String occurs
+     */
     public static HashMap<String, Integer> wordInstanceCounter(ArrayList<SentenceClass> sentenceList) {
-        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
+        HashMap<String, Integer> wordMap = new HashMap<>();
         for (int i = 0; i < sentenceList.size(); i++) {
             SentenceClass currentSentence = sentenceList.get(i);
             for (int k = 0; k < currentSentence.getSentenceLength(); k++) {
@@ -38,6 +52,13 @@ public class TextFormatters {
         return wordMap;
     }
 
+    /**
+     *  Returns a copy of a given string where any doubled spaces, newline characters,
+     *  or tab characters are replaced with a single space.
+     *
+     * @param seed the document to be formatted
+     * @return formatted version of the given string
+     */
     public static String formatDocument(String seed){
         String formattedDoc = seed;
         while (formattedDoc.contains("  ")){
@@ -101,6 +122,12 @@ public class TextFormatters {
         return builder.toString();
     }
 
+    /**
+     * Counts the number of words within a List of Sentences
+     *
+     * @param sentenceList a List of SentenceClass type sentences
+     * @return the number of words in every sentence of the List
+     */
     public static int wordCounts(ArrayList<SentenceClass> sentenceList){
         int wordCount = 0;
         for (int i = 0; i < sentenceList.size(); i++){

@@ -4,7 +4,6 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
-import javax.print.Doc;
 import java.net.URL;
 import java.text.BreakIterator;
 import java.util.*;
@@ -18,7 +17,7 @@ public class Document {
     private String doc_ID;
     private String document;
     private HashMap<String, Integer> wordCounts;
-    private int totalWordCount = 0;
+    public int totalWordCount = 0;
     private ArrayList<SentenceClass> doc_array;
     private int mostPositive = 0;
     private int mostNegative = 0;
@@ -29,7 +28,6 @@ public class Document {
      * @param docId    the document identifier
      * @param docURL the URL with the contents of the document
      */
-
     public Document(String docId, URL docURL) {
         doc_ID = docId;
         try {
@@ -82,6 +80,11 @@ public class Document {
         totalWordCount = TextFormatters.wordCounts(doc_array);
     }
 
+    /**
+     * JADEN
+     * @param text
+     * @return
+     */
     private static ArrayList<SentenceClass> SentenceBreak(String text){
         ArrayList<SentenceClass> temporaryDocArray = new ArrayList<>();
         BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
@@ -102,33 +105,47 @@ public class Document {
     }
 
     /**
+     * Returns the average length of the Words in the Document
      *
-     * @return
+     * @return average length of the Words in the Document
+     * or 0 if the Document contains no Words
      */
     public double averageWordLength() {
-        int totalCharCount = 0;
-        for (int i = 0; i < doc_array.size(); i++){
-            for (int j = 0; j < doc_array.get(i).getSentenceLength(); j++){
-                totalCharCount += doc_array.get(i).getWord(j).length();
-            }
+        if (totalWordCount == 0){
+            return 0;
         }
-        return (double) totalCharCount / totalWordCount;
+        else {
+            int totalCharCount = 0;
+            for (int i = 0; i < doc_array.size(); i++) {
+                for (int j = 0; j < doc_array.get(i).getSentenceLength(); j++) {
+                    totalCharCount += doc_array.get(i).getWord(j).length();
+                }
+            }
+            return (double) totalCharCount / totalWordCount;
+        }
     }
 
+    /**
+     * Laura
+     * @return
+     */
     public double uniqueWordRatio() {
         int numUniqueWords = wordCounts.keySet().size();
         return (double) numUniqueWords / totalWordCount;
     }
 
+    /**
+     * Laura
+     * @return
+     */
     public double hapaxLegomanaRatio() {
-        ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
+        ArrayList<Integer> counts = new ArrayList<>(wordCounts.values());
         int countExactlyOnce = 0;
         for (int i = 0; i < counts.size(); i++) {
             if (counts.get(i) == 1) {
                 countExactlyOnce++;
             }
         }
-
         return (double) countExactlyOnce / totalWordCount;
     }
 
@@ -154,19 +171,24 @@ public class Document {
         return doc_array.get(sentence_number - 1).toString();
     }
 
+    /**
+     * LAURA
+     * @return
+     */
     public double averageSentenceLength() {
         int counter = 0;
         int sentenceLength = 0;
-
         while (counter < doc_array.size()) {
             sentenceLength += doc_array.get(counter).getSentenceLength();
             counter++;
         }
-
         return (double) sentenceLength / counter;
     }
 
-
+    /**
+     * LAURA
+     * @return 0 if...
+     */
     public double averageSentenceComplexity() {
         int counter = 0;
         int complexity = 0;
@@ -212,5 +234,38 @@ public class Document {
         mostPositive = sentenceSentiments[0];
         mostNegative = sentenceSentiments[1];
         return  mostNegativeSentence;
+    }
+
+    public double compare(Document document1, Document document2){
+        double divergence = 0;
+        List<String> wordsInBoth  = new ArrayList<String>(findWordsInBoth(document1,document2));
+        for(int i = 0; i< wordsInBoth.size(); i++){
+            int frequencyInDoc1 = document1.wordCounts.get(wordsInBoth.get(i));
+            int frequencyInDoc2 = document2.wordCounts.get(wordsInBoth.get(i));
+            double probabilityInDoc1 = (double)frequencyInDoc1/document1.totalWordCount;
+            double probabilityInDoc2 = (double)frequencyInDoc2/document2.totalWordCount;
+            divergence += calculateDivergence(probabilityInDoc1, probabilityInDoc2);
+        }
+
+        return divergence/2.0;
+    }
+
+    private List<String> findWordsInBoth(Document document1, Document document2){
+        Set<String> wordsInBoth = new HashSet<String>(document1.wordCounts.keySet());
+        Set<String> wordsInDoc2 = new HashSet<String>(document2.wordCounts.keySet());
+        wordsInBoth.retainAll(wordsInDoc2);
+
+        return new ArrayList<String>(wordsInBoth);
+    }
+    //TODO: FIND A BETTER WAY TO IMPLEMENT LOG BASE 2
+    private double calculateDivergence(double probability1, double probability2){
+        double divergence = 0.0;
+        double m1 = (probability1 + probability2)/2;
+        divergence = probability1* Math.log(probability1/m1)/Math.log(2.0) +  probability2* Math.log(probability2/m1)/Math.log(2.0);
+        return divergence;
+    }
+    public HashMap<String, Integer> getHashMap(){
+        return wordCounts;
+
     }
 }
