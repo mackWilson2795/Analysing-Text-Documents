@@ -28,7 +28,7 @@ public class Task3SentimentTests {
 
     @Test
     public void testSentences() {
-        String text = "maybe"; // the text for analysis
+        String text = "maybe";
         try (LanguageServiceClient language = LanguageServiceClient.create()) {
             Document doc = Document.newBuilder().setContent(text).setType(Type.PLAIN_TEXT).build();
             AnalyzeSentimentResponse response = language.analyzeSentiment(doc);

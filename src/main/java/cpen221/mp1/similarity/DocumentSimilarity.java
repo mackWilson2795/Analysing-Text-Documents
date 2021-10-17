@@ -30,8 +30,8 @@ public class DocumentSimilarity {
             for(int i = 0; i< wordsInBoth.size(); i++){
                 int frequencyInDoc1 = doc1.getHashMap().get(wordsInBoth.get(i));
                 int frequencyInDoc2 = doc2.getHashMap().get(wordsInBoth.get(i));
-                double probabilityInDoc1 = (double)frequencyInDoc1/doc1.totalWords();
-                double probabilityInDoc2 = (double)frequencyInDoc2/doc2.totalWords();
+                double probabilityInDoc1 = (double)frequencyInDoc1/doc1.totalWordCount;
+                double probabilityInDoc2 = (double)frequencyInDoc2/doc2.totalWordCount;
                 divergence += calculateDivergence(probabilityInDoc1, probabilityInDoc2);
             }
         return divergence/2.0;

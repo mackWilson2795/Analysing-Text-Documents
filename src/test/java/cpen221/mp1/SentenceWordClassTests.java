@@ -1,17 +1,18 @@
 package cpen221.mp1;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import cpen221.mp1.Document;
 
-import javax.print.Doc;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class SentenceWordClassTests {
 
     // TODO: Doc ID test
+
+    @Test
+    public void testDocID() {
+        Document testDocument = new Document("test", "resources/testdoc.txt");
+        Assertions.assertEquals("test", testDocument.getDocId());
+    }
 
     @Test
     public void testSentenceWithMultiplePhrases() {
