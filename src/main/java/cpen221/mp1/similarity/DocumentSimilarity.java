@@ -25,8 +25,16 @@ public class DocumentSimilarity {
      * @return the Jensen-Shannon Divergence between the given documents
      */
     public double jsDivergence(Document doc1, Document doc2) {
-        // TODO: Implement this method
-        return 0.0;
+         double divergence = 0;
+            List<String> wordsInBoth  = new ArrayList<String>(findWordsInBoth(doc1,doc2));
+            for(int i = 0; i< wordsInBoth.size(); i++){
+                int frequencyInDoc1 = doc1.getHashMap().get(wordsInBoth.get(i));
+                int frequencyInDoc2 = doc2.getHashMap().get(wordsInBoth.get(i));
+                double probabilityInDoc1 = (double)frequencyInDoc1/doc1.totalWords();
+                double probabilityInDoc2 = (double)frequencyInDoc2/doc2.totalWords();
+                divergence += calculateDivergence(probabilityInDoc1, probabilityInDoc2);
+            }
+        return divergence/2.0;
     }
 
     /**
@@ -35,19 +43,15 @@ public class DocumentSimilarity {
      * @param doc2 the second document, is not null
      * @return the Document Divergence between the given documents
      */
-    public double documentDivergence(Document doc1, Document doc2) { double divergence = 0;
-        List<String> wordsInBoth  = new ArrayList<String>(findWordsInBoth(doc1,doc2));
-        for(int i = 0; i< wordsInBoth.size(); i++){
-            int frequencyInDoc1 = doc1.getHashMap().get(wordsInBoth.get(i));
-            int frequencyInDoc2 = doc2.getHashMap().get(wordsInBoth.get(i));
-            double probabilityInDoc1 = (double)frequencyInDoc1/doc1.totalWords();
-            double probabilityInDoc2 = (double)frequencyInDoc2/doc2.totalWords();
-            divergence += calculateDivergence(probabilityInDoc1, probabilityInDoc2);
+    public double documentDivergence(Document doc1, Document doc2) {
+        double divergence = WT_AVG_WORD_LENGTH*Math.abs(doc1.averageWordLength() - doc2.averageWordLength());
+        divergence +=  WT_UNIQUE_WORD_RATIO*Math.abs(doc1.uniqueWordRatio() - doc2.uniqueWordRatio());
+        divergence += WT_AVG_SENTENCE_CPLXTY*Math.abs(doc1.averageSentenceComplexity() - doc2.averageSentenceComplexity());
+        divergence += WT_AVG_SENTENCE_LENGTH*Math.abs(doc1.averageSentenceLength() - doc2.averageSentenceLength());
+        divergence += WT_HAPAX_LEGOMANA_RATIO*Math.abs(doc1.hapaxLegomanaRatio() - doc2.hapaxLegomanaRatio());
+        divergence += WT_JS_DIVERGENCE*(Math.abs(jsDivergence(doc1, doc2)));
 
-
-        return divergence/2.0;
-    }
-        return 0.0;
+        return divergence;
     }
 
 
