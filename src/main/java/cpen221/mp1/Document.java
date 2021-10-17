@@ -4,6 +4,7 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
+import javax.print.Doc;
 import java.net.URL;
 import java.text.BreakIterator;
 import java.util.*;
@@ -25,8 +26,10 @@ public class Document {
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
     ArrayList<SentenceClass> doc_array;
+
     public int mostPositive = 0;
     public int mostNegative = 0;
+
 
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -282,4 +285,38 @@ public class Document {
     public String getMostNegativeSentence() throws NoSuitableSentenceException {
         return SentimentAnalysis.getMostNegativeSentence(this);
     }
+    /* ------- Task 4 ------- */
+    public double compare(Document document1, Document document2){
+        double divergence = 0;
+        List<String> wordsInBoth  = new ArrayList<String>(findWordsInBoth(document1,document2));
+        for(int i = 0; i< wordsInBoth.size(); i++){
+            int frequencyInDoc1 = document1.wordCounts.get(wordsInBoth.get(i));
+            int frequencyInDoc2 = document2.wordCounts.get(wordsInBoth.get(i));
+            double probabilityInDoc1 = (double)frequencyInDoc1/document1.totalWordCount;
+            double probabilityInDoc2 = (double)frequencyInDoc2/document2.totalWordCount;
+            divergence += calculateDivergence(probabilityInDoc1, probabilityInDoc2);
+        }
+
+        return divergence/2.0;
+    }
+
+    private List<String> findWordsInBoth(Document document1, Document document2){
+        Set<String> wordsInBoth = new HashSet<String>(document1.wordCounts.keySet());
+        Set<String> wordsInDoc2 = new HashSet<String>(document2.wordCounts.keySet());
+        wordsInBoth.retainAll(wordsInDoc2);
+
+        return new ArrayList<String>(wordsInBoth);
+    }
+    //TODO: FIND A BETTER WAY TO IMPLEMENT LOG BASE 2
+    private double calculateDivergence(double probability1, double probability2){
+        double divergence = 0.0;
+        double m1 = (probability1 + probability2)/2;
+        divergence = probability1* Math.log(probability1/m1)/Math.log(2.0) +  probability2* Math.log(probability2/m1)/Math.log(2.0);
+        return divergence;
+    }
+    public HashMap<String, Integer> getHashMap(){
+        return wordCounts;
+
+    }
+
 }
