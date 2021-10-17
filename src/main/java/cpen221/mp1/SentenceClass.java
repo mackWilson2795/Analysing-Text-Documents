@@ -1,7 +1,7 @@
 package cpen221.mp1;
 
-import java.text.BreakIterator;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import static cpen221.mp1.Document.*;
@@ -9,24 +9,27 @@ import static cpen221.mp1.Document.*;
 public class SentenceClass {
 
     private final ArrayList<Word> sentence = new ArrayList<>();
-    private int phrases = 0;
+    private int phrases = 1;
     private int length;
+    private String originalString;
 
     /**
      *
-     * @param seed
+     * @param seed is not null and contains at least one word. BreakIterator can be used to break a text into its
+     *             constituent sentences
+     *
      */
     public SentenceClass(String seed){
-        StringTokenizer tokenizer = new StringTokenizer(seed, " ");
+        originalString = formatText(seed).toLowerCase();
+        StringTokenizer tokenizer = new StringTokenizer(seed.toLowerCase(), " ");
         boolean phraseBroken = false;
 
         while (tokenizer.hasMoreTokens()){
             String nextToken = tokenizer.nextToken();
             int i = 0;
             int j = nextToken.length();
-
             try {
-                while (SYMBOLS.contains(nextToken.charAt(i))){
+                while (i < nextToken.length() && SYMBOLS.contains(nextToken.charAt(i))){
                     if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
                         phraseBroken = true;
                         break;
@@ -36,14 +39,13 @@ public class SentenceClass {
 
                 Word nextWord = new Word(nextToken);
                 sentence.add(nextWord);
-                
+
                 if (phraseBroken) {
                     phrases++;
                     phraseBroken = false;
                 }
-
                 while (SYMBOLS.contains(nextToken.charAt(j - 1))){
-                    if (PHRASE_BREAKERS.contains(nextToken.charAt(i))) {
+                    if (PHRASE_BREAKERS.contains(nextToken.charAt(j - 1))) {
                         phraseBroken = true;
                         break;
                     }
@@ -55,23 +57,16 @@ public class SentenceClass {
                  */
             }
         }
-
         length = sentence.size();
     }
 
+    @Override
     /**
      *
      * @return
      */
-    public String getSentence(){
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < length; i++){
-            builder.append(this.getWord(i));
-            builder.append(" ");
-        }
-
-        return builder.toString();
+    public String toString(){
+        return originalString;
     }
 
     /**
@@ -98,34 +93,4 @@ public class SentenceClass {
     public int getSentenceLength(){
         return length;
     }
-
-
-    // TODO: can combine two methods into one????
-    /**
-     *
-     * @param toFormat
-     * @return
-     */
-    private String formatSentence(String toFormat) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(toFormat);
-
-        while (SYMBOLS.contains(builder.charAt(0))) {
-            if (builder.charAt(0) == HASH_TAG){
-                if (SYMBOLS.contains(builder.charAt(1))){
-                    builder.deleteCharAt(0);
-                } else {
-                    break;
-                }
-            } else {
-                builder.deleteCharAt(0);
-            }
-        }
-        while (SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-
-        return builder.toString();
-    }
-
 }

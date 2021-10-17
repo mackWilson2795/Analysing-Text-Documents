@@ -1,10 +1,8 @@
 package cpen221.mp1;
 
-import com.google.cloud.language.v1.Sentence;
 import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
 import cpen221.mp1.sentiments.SentimentAnalysis;
-import org.checkerframework.checker.units.qual.A;
 
 import java.net.URL;
 import java.text.BreakIterator;
@@ -21,11 +19,14 @@ public class Document {
     public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
     public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
+    // TODO: Can we make these all private??
     String doc_ID;
     String document;
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
-    ArrayList<SentenceClass> doc_array = new ArrayList<SentenceClass>();
+    ArrayList<SentenceClass> doc_array;
+    public int mostPositive = 0;
+    public int mostNegative = 0;
 
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -38,13 +39,14 @@ public class Document {
             }
             document = data.toString();
 
-            document = formatString(document);
+            document = formatDocument(document);
         }
         catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
 
         doc_array = SentenceBreak(document);
+        wordCounts = instanceCounter();
     }
 
 
@@ -65,16 +67,17 @@ public class Document {
             }
             document = data.toString();
 
-            document = formatString(document);
+            document = formatDocument(document);
             reader.close();
             // TODO: Is this redundant?
-            document = formatString(document);
+            document = formatDocument(document);
         }
         catch (IOException ioe) {
             System.out.println("Problem reading file!");
         }
 
         doc_array = SentenceBreak(document);
+        wordCounts = instanceCounter();
     }
 
     private static ArrayList<SentenceClass> SentenceBreak(String text){
@@ -94,7 +97,7 @@ public class Document {
         return temporaryDocArray;
     }
 
-    private HashMap<String, Integer> instanceCounter(String seed) {
+    private HashMap<String, Integer> instanceCounter() {
         HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
 
         for (int i = 0; i < doc_array.size(); i++) {
@@ -111,14 +114,14 @@ public class Document {
                 totalWordCount++;
             }
         }
-        return wordCounts;
+        return wordMap;
     }
 
     public String getDocId() {
         return doc_ID;
     }
 
-    public String formatString(String seed){
+    public String formatDocument(String seed){
         String formattedDoc = seed;
 
         while (formattedDoc.contains("  ")){
@@ -142,12 +145,15 @@ public class Document {
      * @return
      */
     public double averageWordLength() {
-        int wordCount = 0;
-        return 0.0;
-    }
+        int totalCharCount = 0;
 
-    public double totalWords() {
-        return totalWordCount;
+        for (int i = 0; i < doc_array.size(); i++){
+            for (int j = 0; j < doc_array.get(i).getSentenceLength(); j++){
+                totalCharCount += doc_array.get(i).getWord(j).length();
+            }
+        }
+
+        return (double) totalCharCount / totalWordCount;
     }
 
     public double uniqueWordRatio() {
@@ -186,17 +192,8 @@ public class Document {
      *                        {@code 1 <= sentence_number <= this.getSentenceCount()}
      * @return the sentence indexed by {@code sentence_number}
      */
-    // TODO: MACK IMPLEMENT THIS
     public String getSentence(int sentence_number) {
-        StringBuilder sentenceString = new StringBuilder();
-        String word;
-        ArrayList<String> sentence = new ArrayList<String>();
-        int size = sentence.size();
-        for (int i = 0; i < size; i++) {
-            word = sentence.get(i);
-            sentenceString.append(word);
-        }
-        return sentenceString.toString();
+        return doc_array.get(sentence_number - 1).toString();
     }
 
     public double averageSentenceLength() {
@@ -225,9 +222,39 @@ public class Document {
         return (double) complexity / counter;
     }
 
-
+    @Override
+    /**
+     * @returns a string containing the text of a document
+     */
     public String toString(){
         return document;
+    }
+
+    /**
+     *
+     * @param toFormat
+     * @return
+     */
+    public static String formatText(String toFormat) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(toFormat);
+
+        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(0))) {
+            if (builder.charAt(0) == HASH_TAG){
+                if (SYMBOLS.contains(builder.charAt(1))){
+                    builder.deleteCharAt(0);
+                } else {
+                    break;
+                }
+            } else {
+                builder.deleteCharAt(0);
+            }
+        }
+        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
+            builder.deleteCharAt(builder.length() - 1);
+        }
+
+        return builder.toString();
     }
 
     /**
@@ -240,8 +267,7 @@ public class Document {
      *                                     expresses a positive sentiment
      */
     public String getMostPositiveSentence() throws NoSuitableSentenceException {
-        // TODO: Implement this method
-        return null;
+        return SentimentAnalysis.getMostPositiveSentence(this);
     }
 
     /**
@@ -254,7 +280,6 @@ public class Document {
      *                                     expresses a negative sentiment
      */
     public String getMostNegativeSentence() throws NoSuitableSentenceException {
-        // TODO: Implement this method
-        return null;
+        return SentimentAnalysis.getMostNegativeSentence(this);
     }
 }
