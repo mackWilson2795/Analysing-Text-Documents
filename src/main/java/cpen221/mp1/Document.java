@@ -5,6 +5,7 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
 import java.net.URL;
+import java.sql.Array;
 import java.text.BreakIterator;
 import java.util.*;
 import java.io.FileReader;
@@ -16,7 +17,6 @@ public class Document {
     public static final Set<Character> SYMBOLS = Set.of('!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
             '/', ':', '"', ';', '<', '=', '>', '?', '@', '[', '\\', ' ', ']', '^', '_', '`', '{', '|', '}', '~', '#');
     public static final char HASH_TAG = '#';
-    public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
     public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
     // TODO: Can we make these all private??
@@ -25,9 +25,14 @@ public class Document {
     HashMap<String, Integer> wordCounts;
     int totalWordCount = 0;
     ArrayList<SentenceClass> doc_array;
-    public int mostPositive = 0;
-    public int mostNegative = 0;
+    int mostPositive = 0;
+    int mostNegative = 0;
 
+    /**
+     * @param docId    the document identifier
+     * @param docURL the URL with the contents of the document
+     *
+     */
     public Document(String docId, URL docURL) {
         doc_ID = docId;
         try {
@@ -42,6 +47,7 @@ public class Document {
             document = formatDocument(document);
         }
         catch (IOException ioe) {
+            ioe.printStackTrace();
             System.out.println("Problem reading file!");
         }
 
@@ -73,6 +79,7 @@ public class Document {
             document = formatDocument(document);
         }
         catch (IOException ioe) {
+            ioe.printStackTrace();
             System.out.println("Problem reading file!");
         }
 
@@ -81,7 +88,7 @@ public class Document {
     }
 
     private static ArrayList<SentenceClass> SentenceBreak(String text){
-        ArrayList<SentenceClass> temporaryDocArray = new ArrayList<SentenceClass>();
+        ArrayList<SentenceClass> temporaryDocArray = new ArrayList<>();
         BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
         iterator.setText(text);
 
@@ -146,13 +153,11 @@ public class Document {
      */
     public double averageWordLength() {
         int totalCharCount = 0;
-
         for (int i = 0; i < doc_array.size(); i++){
             for (int j = 0; j < doc_array.get(i).getSentenceLength(); j++){
                 totalCharCount += doc_array.get(i).getWord(j).length();
             }
         }
-
         return (double) totalCharCount / totalWordCount;
     }
 
@@ -231,14 +236,19 @@ public class Document {
     }
 
     /**
+     * Creates a string containing a formatted version of the provided string.
+     * Removes all spaces and the following symbols from the start and end of the string:
+     * ! " $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
      *
-     * @param toFormat
-     * @return
+     * Removes any hashtags that are immediately followed by any of the above symbols or another hashtag.
+     * Any alphabetical characters in the string will be in lowercase.
+     *
+     * @param toFormat the string to be formatted
+     * @return a formatted version of the provided string
      */
     public static String formatText(String toFormat) {
         StringBuilder builder = new StringBuilder();
         builder.append(toFormat);
-
         while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(0))) {
             if (builder.charAt(0) == HASH_TAG){
                 if (SYMBOLS.contains(builder.charAt(1))){
@@ -253,8 +263,7 @@ public class Document {
         while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
             builder.deleteCharAt(builder.length() - 1);
         }
-
-        return builder.toString();
+        return builder.toString().toLowerCase();
     }
 
     /**
@@ -267,7 +276,11 @@ public class Document {
      *                                     expresses a positive sentiment
      */
     public String getMostPositiveSentence() throws NoSuitableSentenceException {
-        return SentimentAnalysis.getMostPositiveSentence(this);
+        int[] sentenceSentiments = {mostPositive, mostNegative};
+        String mostPositiveSentence = SentimentAnalysis.getMostPositiveSentence(this, sentenceSentiments);
+        mostPositive = sentenceSentiments[0];
+        mostNegative = sentenceSentiments[1];
+        return  mostPositiveSentence;
     }
 
     /**
@@ -280,6 +293,10 @@ public class Document {
      *                                     expresses a negative sentiment
      */
     public String getMostNegativeSentence() throws NoSuitableSentenceException {
-        return SentimentAnalysis.getMostNegativeSentence(this);
+        int[] sentenceSentiments = {mostPositive, mostNegative};
+        String mostNegativeSentence = SentimentAnalysis.getMostNegativeSentence(this, sentenceSentiments);
+        mostPositive = sentenceSentiments[0];
+        mostNegative = sentenceSentiments[1];
+        return  mostNegativeSentence;
     }
 }

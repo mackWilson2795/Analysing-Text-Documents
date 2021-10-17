@@ -52,15 +52,26 @@ public class Task3SentimentTests {
         } catch (Exception ioe){
             System.out.println("Error - no suitable sentence exception");
         }
-        Assertions.assertEquals("well, try dancing now", testDocument1.getSentence(testDocument1.mostPositive));
-        Assertions.assertEquals("then the snow fell and she could find nothing at all to eat",testDocument1.getSentence(testDocument1.mostNegative));
+        Assertions.assertEquals("\"Well, try dancing now!\"", testDocument1.getSentence(testDocument1.mostPositive));
+        Assertions.assertEquals("Then the snow fell and she could find nothing at all to eat.",testDocument1.getSentence(testDocument1.mostNegative));
     }
 
     @Test
-    public void neutralSentences () {
+    public void neutralSentencesPosPos () {
         cpen221.mp1.Document testDoc = new cpen221.mp1.Document("doc", "resources/neutralSentences.txt");
         try {
             testDoc.getMostPositiveSentence();
+            testDoc.getMostPositiveSentence();
+        } catch (Exception NoSuitableSentenceException){
+            System.out.println("Neutral sentence test - no suitable sentence");
+        }
+    }
+
+    @Test
+    public void neutralSentencesNegNeg () {
+        cpen221.mp1.Document testDoc = new cpen221.mp1.Document("doc", "resources/neutralSentences.txt");
+        try {
+            testDoc.getMostNegativeSentence();
             testDoc.getMostNegativeSentence();
         } catch (Exception NoSuitableSentenceException){
             System.out.println("Neutral sentence test - no suitable sentence");

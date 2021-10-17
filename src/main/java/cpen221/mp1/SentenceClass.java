@@ -10,17 +10,15 @@ public class SentenceClass {
 
     private final ArrayList<Word> sentence = new ArrayList<>();
     private int phrases = 1;
-    private int length;
-    private String originalString;
+    private final int length;
+    private final String originalString;
 
     /**
-     *
-     * @param seed is not null and contains at least one word. BreakIterator can be used to break a text into its
-     *             constituent sentences
+     * @param seed is not null and contains at least one word.
      *
      */
     public SentenceClass(String seed){
-        originalString = formatText(seed).toLowerCase();
+        originalString = removeSpaces(seed);
         StringTokenizer tokenizer = new StringTokenizer(seed.toLowerCase(), " ");
         boolean phraseBroken = false;
 
@@ -36,10 +34,8 @@ public class SentenceClass {
                     }
                     i++;
                 }
-
                 Word nextWord = new Word(nextToken);
                 sentence.add(nextWord);
-
                 if (phraseBroken) {
                     phrases++;
                     phraseBroken = false;
@@ -62,35 +58,61 @@ public class SentenceClass {
 
     @Override
     /**
+     * Obtain string representation of the sentence.
      *
-     * @return
+     * @return original, unformatted version of the sentence.
      */
     public String toString(){
         return originalString;
     }
 
     /**
+     * Obtain a specific word from the sentence.
+     * Strings are indexed starting from 0.
      *
-     * @param index
-     * @return
+     * @param index the position of the word in the sentence,
+     *              {@code 0 <= index < this.getSentenceLength()}
+     * @return the word indexed by {@code index}
      */
     public String getWord(int index){
         return sentence.get(index).toString();
     }
 
     /**
+     * Obtain the number of phrases in the sentence.
+     * A phrase is a section of a sentence which is non-empty (contains a word),
+     * sentences are broken into phrases by commas, colons, or semicolons.
      *
-     * @return
+     * @return the number
      */
     public int numPhrases(){
         return phrases;
     }
 
     /**
+     * Obtain the number of words in a sentence.
      *
-     * @return
+     * @return the number of valid words contained in a sentence.
      */
     public int getSentenceLength(){
         return length;
+    }
+
+    /**
+     * Returns a copy of the given string without any spaces before or after the first or last non-space character.
+     *
+     * @param seed string to be copied and formatted
+     * @return copy of seed without any leading or lagging spaces
+     */
+    private String removeSpaces(String seed){
+        StringBuilder builder = new StringBuilder();
+        builder.append(seed);
+        while (!(builder.isEmpty()) && builder.charAt(0) == ' '){
+            builder.deleteCharAt(0);
+        }
+        while (!(builder.isEmpty()) && builder.charAt(builder.length() - 1) == ' '){
+            builder.deleteCharAt(builder.length() - 1);
+        }
+        return builder.toString();
     }
 }

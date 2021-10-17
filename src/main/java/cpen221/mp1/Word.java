@@ -5,10 +5,12 @@ import java.util.Locale;
 import static cpen221.mp1.Document.*;
 
 public class Word {
-    private String word;
+    private final String word;
 
     /**
-     * @param seed the token string
+     *
+     * @param seed the token string to be turned into a word.
+     * @throws IllegalArgumentException if the given word contains only invalid characters (punctuation and sy
      */
     public Word(String seed) {
         String formattedWord = Document.formatText(seed);
@@ -22,8 +24,9 @@ public class Word {
 
     @Override
     /**
+     * Obtain the string representation of the word.
      *
-     * @return
+     * @return the formatted word.
      */
     public String toString() {
         return word;
