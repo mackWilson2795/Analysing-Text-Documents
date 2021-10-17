@@ -2,7 +2,10 @@ package cpen221.mp1.similarity;
 
 import cpen221.mp1.Document;
 
+import java.util.*;
+
 public class DocumentSimilarity {
+    //TODO: ALL METHODS STATIC, MERGE INTO MAIN, TEST, SPECS, RUN WITH COVERAGE
 
     /* DO NOT CHANGE THESE WEIGHTS */
     private final int WT_AVG_WORD_LENGTH      = 5;
@@ -32,10 +35,36 @@ public class DocumentSimilarity {
      * @param doc2 the second document, is not null
      * @return the Document Divergence between the given documents
      */
-    public double documentDivergence(Document doc1, Document doc2) {
-        // TODO: Implement this method
-        // Use the provided weights in computing the document divergence
+    public double documentDivergence(Document doc1, Document doc2) { double divergence = 0;
+        List<String> wordsInBoth  = new ArrayList<String>(findWordsInBoth(doc1,doc2));
+        for(int i = 0; i< wordsInBoth.size(); i++){
+            int frequencyInDoc1 = doc1.getHashMap().get(wordsInBoth.get(i));
+            int frequencyInDoc2 = doc2.getHashMap().get(wordsInBoth.get(i));
+            double probabilityInDoc1 = (double)frequencyInDoc1/doc1.totalWords();
+            double probabilityInDoc2 = (double)frequencyInDoc2/doc2.totalWords();
+            divergence += calculateDivergence(probabilityInDoc1, probabilityInDoc2);
+
+
+        return divergence/2.0;
+    }
         return 0.0;
+    }
+
+
+
+    private List<String> findWordsInBoth(Document document1, Document document2){
+        Set<String> wordsInBoth = new HashSet<String>(document1.getHashMap().keySet());
+        Set<String> wordsInDoc2 = new HashSet<String>(document2.getHashMap().keySet());
+        wordsInBoth.retainAll(wordsInDoc2);
+
+        return new ArrayList<String>(wordsInBoth);
+    }
+    //TODO: FIND A BETTER WAY TO IMPLEMENT LOG BASE 2
+    private double calculateDivergence(double probability1, double probability2){
+        double divergence = 0.0;
+        double m1 = (probability1 + probability2)/2;
+        divergence = probability1* Math.log(probability1/m1)/Math.log(2.0) +  probability2* Math.log(probability2/m1)/Math.log(2.0);
+        return divergence;
     }
 
 }

@@ -287,4 +287,9 @@ public class Document {
         divergence = probability1* Math.log(probability1/m1)/Math.log(2.0) +  probability2* Math.log(probability2/m1)/Math.log(2.0);
         return divergence;
     }
+    public HashMap<String, Integer> getHashMap(){
+        return wordCounts;
+
+    }
+
 }
