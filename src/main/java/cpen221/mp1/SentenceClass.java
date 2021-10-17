@@ -3,8 +3,11 @@ package cpen221.mp1;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import cpen221.mp1.TextFormatters;
 
 import static cpen221.mp1.Document.*;
+import static cpen221.mp1.TextFormatters.PHRASE_BREAKERS;
+import static cpen221.mp1.TextFormatters.SYMBOLS;
 
 public class SentenceClass {
 
@@ -18,7 +21,7 @@ public class SentenceClass {
      *
      */
     public SentenceClass(String seed){
-        originalString = removeSpaces(seed);
+        originalString = TextFormatters.removeSpaces(seed);
         StringTokenizer tokenizer = new StringTokenizer(seed.toLowerCase(), " ");
         boolean phraseBroken = false;
 
@@ -96,23 +99,5 @@ public class SentenceClass {
      */
     public int getSentenceLength(){
         return length;
-    }
-
-    /**
-     * Returns a copy of the given string without any spaces before or after the first or last non-space character.
-     *
-     * @param seed string to be copied and formatted
-     * @return copy of seed without any leading or lagging spaces
-     */
-    private String removeSpaces(String seed){
-        StringBuilder builder = new StringBuilder();
-        builder.append(seed);
-        while (!(builder.isEmpty()) && builder.charAt(0) == ' '){
-            builder.deleteCharAt(0);
-        }
-        while (!(builder.isEmpty()) && builder.charAt(builder.length() - 1) == ' '){
-            builder.deleteCharAt(builder.length() - 1);
-        }
-        return builder.toString();
     }
 }

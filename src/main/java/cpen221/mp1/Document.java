@@ -13,10 +13,6 @@ import java.io.IOException;
 import java.io.BufferedReader;
 
 public class Document {
-    public static final Set<Character> SYMBOLS = Set.of('!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
-            '/', ':', '"', ';', '<', '=', '>', '?', '@', '[', '\\', ' ', ']', '^', '_', '`', '{', '|', '}', '~', '#');
-    public static final char HASH_TAG = '#';
-    public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
     private String doc_ID;
     private String document;
@@ -31,7 +27,6 @@ public class Document {
      *
      * @param docId    the document identifier
      * @param docURL the URL with the contents of the document
-     *
      */
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -43,8 +38,7 @@ public class Document {
                 data.append(" ");
             }
             document = data.toString();
-
-            document = formatDocument(document);
+            document = TextFormatters.formatDocument(document);
         }
         catch (IOException ioe) {
             ioe.printStackTrace();
@@ -52,7 +46,8 @@ public class Document {
         }
 
         doc_array = SentenceBreak(document);
-        wordCounts = instanceCounter();
+        wordCounts = TextFormatters.wordInstanceCounter(doc_array);
+        totalWordCount = TextFormatters.wordCounts(doc_array);
     }
 
 
@@ -65,7 +60,6 @@ public class Document {
      */
     public Document(String docId, String fileName) {
         doc_ID = docId;
-
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             StringBuilder data = new StringBuilder();
@@ -74,17 +68,16 @@ public class Document {
                 data.append(" ");
             }
             document = data.toString();
-
-            document = formatDocument(document);
+            document = TextFormatters.formatDocument(document);
             reader.close();
         }
         catch (IOException ioe) {
             ioe.printStackTrace();
             System.out.println("Problem reading file!");
         }
-
         doc_array = SentenceBreak(document);
-        wordCounts = instanceCounter();
+        wordCounts = TextFormatters.wordInstanceCounter(doc_array);
+        totalWordCount = TextFormatters.wordCounts(doc_array);
     }
 
     private static ArrayList<SentenceClass> SentenceBreak(String text){
@@ -96,56 +89,15 @@ public class Document {
         for (int end = iterator.next();
              end != BreakIterator.DONE;
              start = end, end = iterator.next()) {
-
             SentenceClass nextSentence = new SentenceClass(text.substring(start, end));
             temporaryDocArray.add(nextSentence);
         }
-
         return temporaryDocArray;
-    }
-
-    private HashMap<String, Integer> instanceCounter() {
-        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-
-        for (int i = 0; i < doc_array.size(); i++) {
-            SentenceClass currentSentence = doc_array.get(i);
-            for (int k = 0; k < currentSentence.getSentenceLength(); k++) {
-                String word = currentSentence.getWord(k);
-                if (wordMap.containsKey(word)) {
-                    int count = wordMap.get(word);
-                    count++;
-                    wordMap.replace(word, count);
-                } else {
-                    wordMap.put(word, 1);
-                }
-                totalWordCount++;
-            }
-        }
-        return wordMap;
     }
 
     public String getDocId() {
         return doc_ID;
     }
-
-    public String formatDocument(String seed){
-        String formattedDoc = seed;
-
-        while (formattedDoc.contains("  ")){
-            formattedDoc = formattedDoc.replaceAll("  "," ");
-        }
-        while (formattedDoc.contains("\n")){
-            formattedDoc = formattedDoc.replaceAll("\n","");
-        }
-        while (formattedDoc.contains("\t")){
-            formattedDoc = formattedDoc.replaceAll("\t"," ");
-        }
-
-        return formattedDoc;
-    }
-
-
-    /* ------- Task 1 ------- */
 
     /**
      *
@@ -178,7 +130,6 @@ public class Document {
         return (double) countExactlyOnce / totalWordCount;
     }
 
-    /* ------- Task 2 ------- */
 
     /**
      * Obtain the number of sentences in the document
@@ -225,37 +176,6 @@ public class Document {
             return 0;
         }
         return (double) complexity / counter;
-    }
-
-    /**
-     * Creates a string containing a formatted version of the provided string.
-     * Removes symbols and spaces up to the first non-symbol,
-     * non-space character, the following are considered symbols:
-     * ! " $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
-     * Removes any hashtags that are immediately followed by any of the above symbols or another hashtag.
-     * Any alphabetical characters in the string will be in lowercase.
-     *
-     * @param toFormat the string to be formatted
-     * @return a formatted version of the provided string
-     */
-    public static String formatText(String toFormat) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(toFormat);
-        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(0))) {
-            if (builder.charAt(0) == HASH_TAG){
-                if (SYMBOLS.contains(builder.charAt(1))){
-                    builder.deleteCharAt(0);
-                } else {
-                    break;
-                }
-            } else {
-                builder.deleteCharAt(0);
-            }
-        }
-        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-        return builder.toString().toLowerCase();
     }
 
     /**

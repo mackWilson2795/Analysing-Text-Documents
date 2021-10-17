@@ -11,6 +11,8 @@ import java.net.URL;
 
 public class SentenceWordClassTests {
 
+    // TODO: Doc ID test
+
     @Test
     public void testSentenceWithMultiplePhrases() {
         Document testDocument3 = new Document("test", "resources/testdoc.txt");

@@ -5,16 +5,16 @@ import java.util.Locale;
 import static cpen221.mp1.Document.*;
 
 public class Word {
-    private final String word;
+    private String word;
 
     /**
      * Create an instance of a word, this will have no
      *
-     * @param seed the token string to be turned into a word.
+     * @param seed the token string to be turned into a word, is not null.
      * @throws IllegalArgumentException if the given word contains only invalid characters (punctuation and symbols)
      */
     public Word(String seed) {
-        String formattedWord = Document.formatText(seed);
+        String formattedWord = TextFormatters.formatText(seed);
 
         if (formattedWord.isEmpty()) {
             throw new IllegalArgumentException("Word contained no valid characters.");
@@ -25,9 +25,8 @@ public class Word {
 
     @Override
     /**
-     * Obtain the string representation of the word.
      *
-     * @return the formatted word.
+     * @return
      */
     public String toString() {
         return word;
