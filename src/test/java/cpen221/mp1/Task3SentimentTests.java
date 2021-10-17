@@ -45,15 +45,15 @@ public class Task3SentimentTests {
     }
 
     @Test
-    public void testSentiment() {
+    public void testSentiment() throws NoSuitableSentenceException {
         try {
             testDocument1.getMostPositiveSentence();
             testDocument1.getMostNegativeSentence();
         } catch (Exception ioe){
             System.out.println("Error - no suitable sentence exception");
         }
-        Assertions.assertEquals("\"Well, try dancing now!\"", testDocument1.getSentence(testDocument1.mostPositive));
-        Assertions.assertEquals("Then the snow fell and she could find nothing at all to eat.",testDocument1.getSentence(testDocument1.mostNegative));
+        Assertions.assertEquals("\"Well, try dancing now!\"", testDocument1.getMostPositiveSentence());
+        Assertions.assertEquals("Then the snow fell and she could find nothing at all to eat.", testDocument2.getMostNegativeSentence());
     }
 
     @Test

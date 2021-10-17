@@ -5,7 +5,6 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
 import java.net.URL;
-import java.sql.Array;
 import java.text.BreakIterator;
 import java.util.*;
 import java.io.FileReader;
@@ -19,16 +18,17 @@ public class Document {
     public static final char HASH_TAG = '#';
     public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
-    // TODO: Can we make these all private??
-    String doc_ID;
-    String document;
-    HashMap<String, Integer> wordCounts;
-    int totalWordCount = 0;
-    ArrayList<SentenceClass> doc_array;
-    int mostPositive = 0;
-    int mostNegative = 0;
+    private String doc_ID;
+    private String document;
+    private HashMap<String, Integer> wordCounts;
+    private int totalWordCount = 0;
+    private ArrayList<SentenceClass> doc_array;
+    private int mostPositive = 0;
+    private int mostNegative = 0;
 
     /**
+     * Create a new Document given a URL.
+     *
      * @param docId    the document identifier
      * @param docURL the URL with the contents of the document
      *
@@ -57,6 +57,8 @@ public class Document {
 
 
     /**
+     * Create a new Document given a URL.
+     *
      * @param docId    the document identifier
      * @param fileName the name of the file with the contents of
      *                 the document
@@ -75,8 +77,6 @@ public class Document {
 
             document = formatDocument(document);
             reader.close();
-            // TODO: Is this redundant?
-            document = formatDocument(document);
         }
         catch (IOException ioe) {
             ioe.printStackTrace();
@@ -227,19 +227,11 @@ public class Document {
         return (double) complexity / counter;
     }
 
-    @Override
-    /**
-     * @returns a string containing the text of a document
-     */
-    public String toString(){
-        return document;
-    }
-
     /**
      * Creates a string containing a formatted version of the provided string.
-     * Removes all spaces and the following symbols from the start and end of the string:
+     * Removes symbols and spaces up to the first non-symbol,
+     * non-space character, the following are considered symbols:
      * ! " $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
-     *
      * Removes any hashtags that are immediately followed by any of the above symbols or another hashtag.
      * Any alphabetical characters in the string will be in lowercase.
      *

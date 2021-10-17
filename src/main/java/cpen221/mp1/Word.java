@@ -8,9 +8,10 @@ public class Word {
     private final String word;
 
     /**
+     * Create an instance of a word, this will have no
      *
      * @param seed the token string to be turned into a word.
-     * @throws IllegalArgumentException if the given word contains only invalid characters (punctuation and sy
+     * @throws IllegalArgumentException if the given word contains only invalid characters (punctuation and symbols)
      */
     public Word(String seed) {
         String formattedWord = Document.formatText(seed);

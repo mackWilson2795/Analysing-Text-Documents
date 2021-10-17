@@ -31,7 +31,7 @@ public class SentimentAnalysis {
             sentenceSentiments[1] = mostNegativeFound;
         }
         if (mostPositiveFound == 0) {
-            throw new NoSuitableSentenceException();
+            throw new NoSuitableSentenceException("No positive sentences found in document.");
         } else {
             return  document.getSentence(mostPositiveFound);
         }
@@ -57,7 +57,7 @@ public class SentimentAnalysis {
             sentenceSentiments[1] = mostNegativeFound;
         }
         if (mostNegativeFound == 0) {
-            throw new NoSuitableSentenceException();
+            throw new NoSuitableSentenceException("No negative sentences found in document.");
         } else {
             return  document.getSentence(mostNegativeFound);
         }
