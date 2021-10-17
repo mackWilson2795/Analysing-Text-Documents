@@ -4,6 +4,7 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
+import javax.print.Doc;
 import java.net.URL;
 import java.text.BreakIterator;
 import java.util.*;
@@ -28,6 +29,7 @@ public class Document {
      * @param docId    the document identifier
      * @param docURL the URL with the contents of the document
      */
+
     public Document(String docId, URL docURL) {
         doc_ID = docId;
         try {
