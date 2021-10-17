@@ -55,7 +55,12 @@ public class DocumentSimilarity {
     }
 
 
-
+    /**
+     *
+     * @param document1
+     * @param document2
+     * @return
+     */
     private List<String> findWordsInBoth(Document document1, Document document2){
         Set<String> wordsInBoth = new HashSet<String>(document1.getHashMap().keySet());
         Set<String> wordsInDoc2 = new HashSet<String>(document2.getHashMap().keySet());
@@ -64,6 +69,13 @@ public class DocumentSimilarity {
         return new ArrayList<String>(wordsInBoth);
     }
     //TODO: FIND A BETTER WAY TO IMPLEMENT LOG BASE 2
+
+    /**
+     * 
+     * @param probability1
+     * @param probability2
+     * @return
+     */
     private double calculateDivergence(double probability1, double probability2){
         double divergence = 0.0;
         double m1 = (probability1 + probability2)/2;
