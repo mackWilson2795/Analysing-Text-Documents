@@ -11,6 +11,8 @@ import java.net.URL;
 
 public class SentenceWordClassTests {
 
+    // TODO: Doc ID test
+
     @Test
     public void testSentenceWithMultiplePhrases() {
         Document testDocument3 = new Document("test", "resources/testdoc.txt");
@@ -20,6 +22,7 @@ public class SentenceWordClassTests {
     @Test
     public void irregularPunctuation() {
         cpen221.mp1.Document testDocument = new Document("test", "resources/oddPunctuation.txt");
-        Assertions.assertEquals(5, testDocument.averageSentenceComplexity(), 0.005);
+        Assertions.assertEquals(6, testDocument.averageSentenceComplexity(), 0.005);
+        Assertions.assertEquals("Why are you, ,working, so hard ,,,,,,;;;;'''' Come into the shade, away from the sun, and sing a song with me.,", testDocument.getSentence(1));
     }
 }
