@@ -1,0 +1,11 @@
+However, it is necessary here that the row-echelon matrix has a row of zeros. Recall that the rank of a
+matrix A is the number of nonzero rows in any row-echelon matrix U to which A can be carried by row
+operations. Thus, if A is m×n, the matrix U has no row of zeros if and only if A has rank mTheorem 2.7.2 provides an important general factorization theorem for matrices. If A is any m × n
+matrix, it asserts that there exists a permutation matrix P and an LU-factorization PA = LU. Moreover,
+it shows that either P = I or P = Ps
+P2P1, where P1, P2, ..., Ps are the elementary permutation matrices arising in the reduction of A to row-echelon form. Now observe that P
+−1
+i = Pi for each i (they are
+elementary row interchanges). Thus, P
+−1 = P1P2 Ps
+, so the matrix A can be factored as

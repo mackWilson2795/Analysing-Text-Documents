@@ -4,6 +4,7 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
+import javax.print.Doc;
 import java.net.URL;
 import java.text.BreakIterator;
 import java.util.*;
@@ -13,20 +14,21 @@ import java.io.IOException;
 import java.io.BufferedReader;
 
 public class Document {
-    public static final Set<Character> SYMBOLS = Set.of('!', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
-            '/', ':', '"', ';', '<', '=', '>', '?', '@', '[', '\\', ' ', ']', '^', '_', '`', '{', '|', '}', '~', '#');
-    public static final char HASH_TAG = '#';
-    public static final Set<Character> SENTENCE_ENDERS = Set.of('!', '.', '?');
-    public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
-    // TODO: Can we make these all private??
-    String doc_ID;
-    String document;
-    HashMap<String, Integer> wordCounts;
-    int totalWordCount = 0;
-    ArrayList<SentenceClass> doc_array;
-    public int mostPositive = 0;
-    public int mostNegative = 0;
+    private String doc_ID;
+    private String document;
+    private HashMap<String, Integer> wordCounts;
+    private int totalWordCount = 0;
+    private ArrayList<SentenceClass> doc_array;
+    private int mostPositive = 0;
+    private int mostNegative = 0;
+
+    /**
+     * Create a new Document given a URL.
+     *
+     * @param docId    the document identifier
+     * @param docURL the URL with the contents of the document
+     */
 
     public Document(String docId, URL docURL) {
         doc_ID = docId;
@@ -38,26 +40,28 @@ public class Document {
                 data.append(" ");
             }
             document = data.toString();
-
-            document = formatDocument(document);
+            document = TextFormatters.formatDocument(document);
         }
         catch (IOException ioe) {
+            ioe.printStackTrace();
             System.out.println("Problem reading file!");
         }
 
         doc_array = SentenceBreak(document);
-        wordCounts = instanceCounter();
+        wordCounts = TextFormatters.wordInstanceCounter(doc_array);
+        totalWordCount = TextFormatters.wordCounts(doc_array);
     }
 
 
     /**
+     * Create a new Document given a URL.
+     *
      * @param docId    the document identifier
      * @param fileName the name of the file with the contents of
      *                 the document
      */
     public Document(String docId, String fileName) {
         doc_ID = docId;
-
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             StringBuilder data = new StringBuilder();
@@ -66,22 +70,20 @@ public class Document {
                 data.append(" ");
             }
             document = data.toString();
-
-            document = formatDocument(document);
+            document = TextFormatters.formatDocument(document);
             reader.close();
-            // TODO: Is this redundant?
-            document = formatDocument(document);
         }
         catch (IOException ioe) {
+            ioe.printStackTrace();
             System.out.println("Problem reading file!");
         }
-
         doc_array = SentenceBreak(document);
-        wordCounts = instanceCounter();
+        wordCounts = TextFormatters.wordInstanceCounter(doc_array);
+        totalWordCount = TextFormatters.wordCounts(doc_array);
     }
 
     private static ArrayList<SentenceClass> SentenceBreak(String text){
-        ArrayList<SentenceClass> temporaryDocArray = new ArrayList<SentenceClass>();
+        ArrayList<SentenceClass> temporaryDocArray = new ArrayList<>();
         BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
         iterator.setText(text);
 
@@ -89,56 +91,15 @@ public class Document {
         for (int end = iterator.next();
              end != BreakIterator.DONE;
              start = end, end = iterator.next()) {
-
             SentenceClass nextSentence = new SentenceClass(text.substring(start, end));
             temporaryDocArray.add(nextSentence);
         }
-
         return temporaryDocArray;
-    }
-
-    private HashMap<String, Integer> instanceCounter() {
-        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
-
-        for (int i = 0; i < doc_array.size(); i++) {
-            SentenceClass currentSentence = doc_array.get(i);
-            for (int k = 0; k < currentSentence.getSentenceLength(); k++) {
-                String word = currentSentence.getWord(k);
-                if (wordMap.containsKey(word)) {
-                    int count = wordMap.get(word);
-                    count++;
-                    wordMap.replace(word, count);
-                } else {
-                    wordMap.put(word, 1);
-                }
-                totalWordCount++;
-            }
-        }
-        return wordMap;
     }
 
     public String getDocId() {
         return doc_ID;
     }
-
-    public String formatDocument(String seed){
-        String formattedDoc = seed;
-
-        while (formattedDoc.contains("  ")){
-            formattedDoc = formattedDoc.replaceAll("  "," ");
-        }
-        while (formattedDoc.contains("\n")){
-            formattedDoc = formattedDoc.replaceAll("\n","");
-        }
-        while (formattedDoc.contains("\t")){
-            formattedDoc = formattedDoc.replaceAll("\t"," ");
-        }
-
-        return formattedDoc;
-    }
-
-
-    /* ------- Task 1 ------- */
 
     /**
      *
@@ -146,13 +107,11 @@ public class Document {
      */
     public double averageWordLength() {
         int totalCharCount = 0;
-
         for (int i = 0; i < doc_array.size(); i++){
             for (int j = 0; j < doc_array.get(i).getSentenceLength(); j++){
                 totalCharCount += doc_array.get(i).getWord(j).length();
             }
         }
-
         return (double) totalCharCount / totalWordCount;
     }
 
@@ -173,7 +132,6 @@ public class Document {
         return (double) countExactlyOnce / totalWordCount;
     }
 
-    /* ------- Task 2 ------- */
 
     /**
      * Obtain the number of sentences in the document
@@ -222,41 +180,6 @@ public class Document {
         return (double) complexity / counter;
     }
 
-    @Override
-    /**
-     * @returns a string containing the text of a document
-     */
-    public String toString(){
-        return document;
-    }
-
-    /**
-     *
-     * @param toFormat
-     * @return
-     */
-    public static String formatText(String toFormat) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(toFormat);
-
-        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(0))) {
-            if (builder.charAt(0) == HASH_TAG){
-                if (SYMBOLS.contains(builder.charAt(1))){
-                    builder.deleteCharAt(0);
-                } else {
-                    break;
-                }
-            } else {
-                builder.deleteCharAt(0);
-            }
-        }
-        while (!(builder.isEmpty()) && SYMBOLS.contains(builder.charAt(builder.length() - 1))) {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-
-        return builder.toString();
-    }
-
     /**
      * Obtain the sentence with the most positive sentiment in the document
      *
@@ -267,7 +190,11 @@ public class Document {
      *                                     expresses a positive sentiment
      */
     public String getMostPositiveSentence() throws NoSuitableSentenceException {
-        return SentimentAnalysis.getMostPositiveSentence(this);
+        int[] sentenceSentiments = {mostPositive, mostNegative};
+        String mostPositiveSentence = SentimentAnalysis.getMostPositiveSentence(this, sentenceSentiments);
+        mostPositive = sentenceSentiments[0];
+        mostNegative = sentenceSentiments[1];
+        return  mostPositiveSentence;
     }
 
     /**
@@ -280,6 +207,10 @@ public class Document {
      *                                     expresses a negative sentiment
      */
     public String getMostNegativeSentence() throws NoSuitableSentenceException {
-        return SentimentAnalysis.getMostNegativeSentence(this);
+        int[] sentenceSentiments = {mostPositive, mostNegative};
+        String mostNegativeSentence = SentimentAnalysis.getMostNegativeSentence(this, sentenceSentiments);
+        mostPositive = sentenceSentiments[0];
+        mostNegative = sentenceSentiments[1];
+        return  mostNegativeSentence;
     }
 }
