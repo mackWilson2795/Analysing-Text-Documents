@@ -65,6 +65,7 @@ public class GroupingDocuments {
     }
 
     /**
+     * Merge two lists in an arraylist
      * @param partDoc a List containing Lists of Documents
      * @param document1 a Document
      * @param document2 a Document
@@ -89,8 +90,9 @@ public class GroupingDocuments {
     }
 
     /**
-     * @param divergences List that is non-null and contains Lists that are non null
-     * @return List containing sub-Lists of element indexes. sub-Lists elements are in an order
+     * Sort indexes of the double arraylist based on the smallest to largest divergence
+     * @param divergences  List that is non-null and contains Lists that are non null
+     * @return List containing sub-Lists of element indexes. Sub-Lists elements are in an order
      * reflective of the ascending order of the elements in the inputted list.
      */
     private static ArrayList<ArrayList<Integer>> indexSort(List<ArrayList<Double>> divergences){
