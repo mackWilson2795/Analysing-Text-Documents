@@ -7,7 +7,6 @@ import cpen221.mp1.TextFormatters;
 
 
 public class DocumentSimilarity {
-    //TODO: ALL METHODS STATIC, MERGE INTO MAIN, TEST, SPECS, RUN WITH COVERAGE
 
     /* DO NOT CHANGE THESE WEIGHTS */
     private final int WT_AVG_WORD_LENGTH = 5;
@@ -18,8 +17,6 @@ public class DocumentSimilarity {
     private final int WT_JS_DIVERGENCE = 50;
     /* ---- END OF WEIGHTS ------ */
 
-    /* ------- Task 4 ------- */
-
     /**
      * Compute the Jensen-Shannon Divergence between the given documents
      *
@@ -27,8 +24,7 @@ public class DocumentSimilarity {
      * @param doc2 the second document, is not null
      * @return the Jensen-Shannon Divergence between the given documents
      */
-    //TODO: DOES A NULL ARRAY HAVE A SIZE
-    public double jsDivergence(Document doc1, Document doc2) {
+    public static double jsDivergence(Document doc1, Document doc2) {
         double divergence = 0;
         List<String> wordsInBoth = new ArrayList<>(findWordsInBoth(doc1, doc2));
         Map<String,Integer> wordCountsDoc1 = getWordCounts(doc1);
@@ -50,7 +46,7 @@ public class DocumentSimilarity {
      * @param doc2 the second document, is not null
      * @return the Document Divergence between the given documents
      */
-    public double documentDivergence(Document doc1, Document doc2) {
+    public static double documentDivergence(Document doc1, Document doc2) {
         double divergence = WT_AVG_WORD_LENGTH * Math.abs(doc1.averageWordLength() - doc2.averageWordLength());
         divergence += WT_UNIQUE_WORD_RATIO * Math.abs(doc1.uniqueWordRatio() - doc2.uniqueWordRatio());
         divergence += WT_AVG_SENTENCE_CPLXTY * Math.abs(doc1.averageSentenceComplexity() - doc2.averageSentenceComplexity());
@@ -69,7 +65,7 @@ public class DocumentSimilarity {
      * @return An array containing all the words found in both document1 and document2.
      * The array contains no repeats.
      */
-    private List<String> findWordsInBoth(Document document1, Document document2) {
+    private static List<String> findWordsInBoth(Document document1, Document document2) {
         Set<String> wordsInBoth = new HashSet<>(getWordCounts(document1).keySet());
         Set<String> wordsInDoc2 = new HashSet<>(getWordCounts(document2).keySet());
         wordsInBoth.retainAll(wordsInDoc2);
@@ -83,7 +79,7 @@ public class DocumentSimilarity {
      * @param probability2 The probability of the same word being found in another given document
      * @return The divergence between both probabilities.
      */
-    private double calculateDivergence(double probability1, double probability2) {
+    private static double calculateDivergence(double probability1, double probability2) {
         double divergence = 0.0;
         double m1 = (probability1 + probability2) / 2;
         divergence = probability1 * Math.log(probability1 / m1) / Math.log(2.0) + probability2 * Math.log(probability2 / m1) / Math.log(2.0);
@@ -96,7 +92,7 @@ public class DocumentSimilarity {
      * @return A map which maps each unique word in document to an integer, representing
      * the amount of times that word occurred in document.
      */
-    private HashMap<String, Integer> getWordCounts(Document document) {
+    private static HashMap<String, Integer> getWordCounts(Document document) {
         HashMap<String, Integer> wordCounts = TextFormatters.wordInstanceCounter(TextFormatters.sentenceArray(document));
         return wordCounts;
     }
@@ -106,7 +102,7 @@ public class DocumentSimilarity {
      * @param document A document
      * @return Total number of words in document.
      */
-    private int getTotalWordCount (Document document){
+    private static int getTotalWordCount (Document document){
         return TextFormatters.totalWordCount(TextFormatters.sentenceArray(document));
     }
 }
