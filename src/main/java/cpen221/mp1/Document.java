@@ -81,9 +81,9 @@ public class Document {
     
     /**
      * Break a passage into a list of sentences
+     *
      * @param text text that is non-null string
      * @return List of Sentences in chronological order
-     *
      */
     private static ArrayList<SentenceClass> SentenceBreak(String text){
         ArrayList<SentenceClass> temporaryDocArray = new ArrayList<>();
