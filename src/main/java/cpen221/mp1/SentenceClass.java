@@ -18,7 +18,7 @@ public class SentenceClass {
 
     /**
      * Creates an instance of SentenceClass from a string.
-     * The Sentence is made up of Words, terminates with a .
+     * The Sentence is made up of Words, terminates with a period
      * and contains no leading or lagging spaces
      *
      * @param seed is not null and contains at least one word.
