@@ -78,7 +78,13 @@ public class Document {
         wordCounts = TextFormatters.wordInstanceCounter(doc_array);
         totalWordCount = TextFormatters.totalWordCount(doc_array);
     }
-
+    
+    /**
+     * Break a passage into a list of sentences
+     * @param text text that is non-null string
+     * @return List of Sentences in chronological order
+     *
+     */
     private static ArrayList<SentenceClass> SentenceBreak(String text){
         ArrayList<SentenceClass> temporaryDocArray = new ArrayList<>();
         BreakIterator iterator = BreakIterator.getSentenceInstance(Locale.US);
