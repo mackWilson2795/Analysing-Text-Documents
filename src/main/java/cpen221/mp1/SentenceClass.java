@@ -17,8 +17,11 @@ public class SentenceClass {
     private final String originalString;
 
     /**
-     * @param seed is not null and contains at least one word.
+     * Creates an instance of SentenceClass from a string.
+     * The Sentence is made up of Words, terminates with a .
+     * and contains no leading or lagging spaces
      *
+     * @param seed is not null and contains at least one word.
      */
     public SentenceClass(String seed){
         originalString = TextFormatters.removeSpaces(seed);

@@ -11,6 +11,12 @@ public class TextFormatters {
     public static final char HASH_TAG = '#';
     public static final List<Character> PHRASE_BREAKERS = List.of(',', ';', ':');
 
+    /**
+     * Returns a List containing SentenceClasses for every sentence in a document
+     *
+     * @param document Document to be read from.
+     * @return List of SentenceClasses with every sentence in the document.
+     */
     public static ArrayList<SentenceClass> sentenceArray(Document document){
         ArrayList<SentenceClass> temporarySentenceArray = new ArrayList<>();
         for (int i = 1; i <= document.numSentences(); i++) {
@@ -44,6 +50,12 @@ public class TextFormatters {
         return wordMap;
     }
 
+    /**
+     *
+     *
+     * @param seed
+     * @return
+     */
     public static String formatDocument(String seed){
         String formattedDoc = seed;
         while (formattedDoc.contains("  ")){
@@ -113,8 +125,6 @@ public class TextFormatters {
      * @param sentenceList a List of SentenceClass type sentences
      * @return the number of words in every sentence of the List
      */
-
-
     public static int totalWordCount(ArrayList<SentenceClass> sentenceList){
         int totalWordCount = 0;
         for (int i = 0; i < sentenceList.size(); i++){

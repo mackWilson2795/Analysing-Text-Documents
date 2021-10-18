@@ -12,15 +12,16 @@ public class GroupingDocuments {
     /* ------- Task 5 ------- */
 
     /**
-     * Group documents by similarity
-     * @param allDocuments the set of all documents to be considered,
-     *                     is not null
-     * @param numberOfGroups the number of document groups to be generated
-     * @return groups of documents, where each group (set) contains similar
+     * Group documents by similarity, where each group (set) contains similar
      * documents following this rule: if D_i is in P_x, and P_x contains at
      * least one other document, then P_x contains some other D_j such that
      * the divergence between D_i and D_j is smaller than (or at most equal
      * to) the divergence between D_i and any document that is not in P_x.
+     *
+     * @param allDocuments the set of all documents to be considered,
+     *                     is not null
+     * @param numberOfGroups the number of document groups to be generated
+     * @return Set of groups (sets) of documents grouped by similarity
      */
     public static Set<Set<Document>> groupBySimilarity(Set<Document> allDocuments, int numberOfGroups) {
 
@@ -52,11 +53,10 @@ public class GroupingDocuments {
             index2 = sortedIndexes.get(counter).get(1);
             merger(partitionList, docList.get(index1), docList.get(index2+index1+1));
             counter++;
-
         }
         Set<Set<Document>> finalPartition = new HashSet<Set<Document>>();
-        for(int i = 0 ; i < partitionList.size(); i++){
 
+        for(int i = 0 ; i < partitionList.size(); i++){
             Set<Document> set = new HashSet<Document>(partitionList.get(i));
             finalPartition.add(set);
         }
@@ -66,10 +66,10 @@ public class GroupingDocuments {
 
     /**
      * Merge two lists in an arraylist
+     *
      * @param partDoc a List containing Lists of Documents
      * @param document1 a Document
      * @param document2 a Document
-     * Merge two lists in an arraylist
      */
     private static void merger(List<ArrayList<Document>> partDoc, Document document1, Document document2){
         int index1 = -1, index2 = -1;
@@ -82,7 +82,6 @@ public class GroupingDocuments {
                 index2 = i;
             }
         }
-
         if (index1 != index2) {
             partDoc.get(index1).addAll(partDoc.get(index2));
             partDoc.remove(index2);
@@ -91,6 +90,7 @@ public class GroupingDocuments {
 
     /**
      * Sort indexes of the double arraylist based on the smallest to largest divergence
+     *
      * @param divergences  List that is non-null and contains Lists that are non null
      * @return List containing sub-Lists of element indexes. Sub-Lists elements are in an order
      * reflective of the ascending order of the elements in the inputted list.

@@ -6,7 +6,15 @@ import org.junit.jupiter.api.Test;
 
 public class SentenceWordClassTests {
 
-    // TODO: Doc ID test
+    @Test
+    public void emptyDocTest() {
+        Document testDoc1 = new Document("test1", "resources/Text8.txt");
+        Assertions.assertEquals(0, testDoc1.averageWordLength());
+        Assertions.assertEquals(0,testDoc1.uniqueWordRatio());
+        Assertions.assertEquals(0,testDoc1.hapaxLegomanaRatio());
+        Assertions.assertEquals(0,testDoc1.averageSentenceComplexity());
+        Assertions.assertEquals(0,testDoc1.averageSentenceLength());
+    }
 
     @Test
     public void testDocID() {

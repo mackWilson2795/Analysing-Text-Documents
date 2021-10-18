@@ -29,7 +29,6 @@ public class Document {
      * @param docId    the document identifier
      * @param docURL the URL with the contents of the document
      */
-
     public Document(String docId, URL docURL) {
         doc_ID = docId;
         try {
@@ -51,7 +50,6 @@ public class Document {
         wordCounts = TextFormatters.wordInstanceCounter(doc_array);
         totalWordCount = TextFormatters.totalWordCount(doc_array);
     }
-
 
     /**
      * Create a new Document given a URL.
@@ -108,7 +106,7 @@ public class Document {
     /**
      *Calculates the average word length of a Document.
      * @return the average word length of a document;
-     * returns zero when the document has no words.
+     * returns 0 when the document has no words.
      */
     public double averageWordLength() {
         if (totalWordCount == 0)
@@ -127,7 +125,7 @@ public class Document {
     /**
      *Calculates the ratio of unique words to total words occurring in a document.
      * @return the ratio of unique words to total words;
-     * returns zero when the document has no words.
+     * returns 0 when the document has no words.
      */
     public double uniqueWordRatio() {
         if (totalWordCount == 0)
@@ -137,10 +135,11 @@ public class Document {
             return (double) numUniqueWords / totalWordCount;
         }
     }
+
     /**
      *Calculates the ratio of words that occur exactly once to the total number of words.
      * @return the ratio of words that occur exactly once to the total number of words;
-     * returns zero when the document has no words.
+     * returns 0 when the document has no words.
      */
     public double hapaxLegomanaRatio() {
         if (totalWordCount == 0)
@@ -157,7 +156,6 @@ public class Document {
             return (double) countExactlyOnce / totalWordCount;
         }
     }
-
 
     /**
      * Obtain the number of sentences in the document.
@@ -179,15 +177,17 @@ public class Document {
         return doc_array.get(sentence_number - 1).toString();
     }
     /**
-     *Calculates the average sentence length of a Document.
+     * Calculates the average sentence length of a Document.
+     *
      * @return the average sentence length;
-     * returns zero when the document has no words.
+     * returns 0 when the document has no words.
      */
-    //TODO: WHAT HAPPENS WHEN DOCUMENT IS NULL AND DOC ARRAY HAS NO ENTRIES
     public double averageSentenceLength() {
         int counter = 0;
         int sentenceLength = 0;
-
+        if (doc_array.size() == 0){
+            return 0;
+        }
         while (counter < doc_array.size()) {
             sentenceLength += doc_array.get(counter).getSentenceLength();
             counter++;
@@ -198,11 +198,16 @@ public class Document {
 
     /**
      * Calculates the average sentence complexity of a document
-     * @return the average sentence complexity
+     *
+     * @return the average sentence complexity,
+     * returns 0 if document has no sentences.
      */
     public double averageSentenceComplexity() {
         int counter = 0;
         int complexity = 0;
+        if (doc_array.size() == 0){
+            return 0;
+        }
         while (counter < doc_array.size()) {
             complexity += doc_array.get(counter).numPhrases();
             counter++;
