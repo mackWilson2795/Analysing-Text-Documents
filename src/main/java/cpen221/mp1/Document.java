@@ -4,7 +4,6 @@ import cpen221.mp1.exceptions.NoSuitableSentenceException;
 
 import cpen221.mp1.sentiments.SentimentAnalysis;
 
-import javax.print.Doc;
 import java.net.URL;
 import java.text.BreakIterator;
 import java.util.*;
@@ -18,7 +17,7 @@ public class Document {
     private String doc_ID;
     private String document;
     private HashMap<String, Integer> wordCounts;
-    private int totalWordCount = 0;
+    private int totalWordCount;
     private ArrayList<SentenceClass> doc_array;
     private int mostPositive = 0;
     private int mostNegative = 0;
@@ -145,7 +144,7 @@ public class Document {
         if (totalWordCount == 0)
             return 0;
         else {
-            ArrayList<Integer> counts = new ArrayList<Integer>(wordCounts.values());
+            ArrayList<Integer> counts = new ArrayList<>(wordCounts.values());
             int countExactlyOnce = 0;
             for (int i = 0; i < counts.size(); i++) {
                 if (counts.get(i) == 1) {

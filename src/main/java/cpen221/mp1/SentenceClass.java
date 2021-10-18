@@ -1,11 +1,9 @@
 package cpen221.mp1;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.StringTokenizer;
-import cpen221.mp1.TextFormatters;
 
-import static cpen221.mp1.Document.*;
+
 import static cpen221.mp1.TextFormatters.PHRASE_BREAKERS;
 import static cpen221.mp1.TextFormatters.SYMBOLS;
 

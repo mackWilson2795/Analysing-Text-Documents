@@ -33,7 +33,7 @@ public class TextFormatters {
      * the amount of times that word occurred in document.
      */
     public static HashMap<String, Integer> wordInstanceCounter(ArrayList<SentenceClass> sentenceList) {
-        HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
+        HashMap<String, Integer> wordMap = new HashMap<>();
         for (int i = 0; i < sentenceList.size(); i++) {
             SentenceClass currentSentence = sentenceList.get(i);
             for (int k = 0; k < currentSentence.getSentenceLength(); k++) {
@@ -51,10 +51,12 @@ public class TextFormatters {
     }
 
     /**
+     * Returns a modified copy of a given string, any double spaces,
+     * newline characters, or tab characters will be replaced with
+     * single spaces.
      *
-     *
-     * @param seed
-     * @return
+     * @param seed string to be modified
+     * @return a formatted copy of the input string
      */
     public static String formatDocument(String seed){
         String formattedDoc = seed;
