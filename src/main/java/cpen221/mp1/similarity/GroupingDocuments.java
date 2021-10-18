@@ -25,12 +25,12 @@ public class GroupingDocuments {
      */
     public static Set<Set<Document>> groupBySimilarity(Set<Document> allDocuments, int numberOfGroups) {
 
-        List<ArrayList<Double>> divergenceList = new ArrayList<ArrayList<Double>>();
-        List<Document> docList = new ArrayList<Document>(allDocuments);
-        List<ArrayList<Document>> partitionList = new ArrayList<ArrayList<Document>>();
+        List<ArrayList<Double>> divergenceList = new ArrayList<>();
+        List<Document> docList = new ArrayList<>(allDocuments);
+        List<ArrayList<Document>> partitionList = new ArrayList<>();
 
         for (int i = 0; i < allDocuments.size() - 1; i++){
-            ArrayList<Double> tempDivergences = new ArrayList<Double>();
+            ArrayList<Double> tempDivergences = new ArrayList<>();
             for (int j = i + 1; j < allDocuments.size(); j++){
                 DocumentSimilarity b = new DocumentSimilarity(); //Should probably change to static
                 tempDivergences.add(b.documentDivergence(docList.get(i), docList.get(j))); //Switch in - make document similarity a static class then switch in DocumentSimilarity.Divergence(docList.get(i),docList.get(j)
@@ -38,7 +38,7 @@ public class GroupingDocuments {
             divergenceList.add(tempDivergences);
         }
         for (int i = 0; i < docList.size(); i++){
-            ArrayList<Document> temp = new ArrayList<Document>();
+            ArrayList<Document> temp = new ArrayList<>();
             temp.add(docList.get(i));
             partitionList.add(temp);
         }

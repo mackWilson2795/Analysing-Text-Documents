@@ -8,7 +8,6 @@ import static cpen221.mp1.TextFormatters.PHRASE_BREAKERS;
 import static cpen221.mp1.TextFormatters.SYMBOLS;
 
 public class SentenceClass {
-
     private final ArrayList<Word> sentence = new ArrayList<>();
     private int phrases = 1;
     private final int length;

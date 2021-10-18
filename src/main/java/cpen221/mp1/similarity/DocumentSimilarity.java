@@ -74,7 +74,7 @@ public class DocumentSimilarity {
         Set<String> wordsInDoc2 = new HashSet<>(getWordCounts(document2).keySet());
         wordsInBoth.retainAll(wordsInDoc2);
 
-        return new ArrayList<String>(wordsInBoth);
+        return new ArrayList<>(wordsInBoth);
     }
 
     /**
