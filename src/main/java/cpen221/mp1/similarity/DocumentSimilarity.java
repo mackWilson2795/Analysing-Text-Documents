@@ -30,10 +30,12 @@ public class DocumentSimilarity {
     //TODO: DOES A NULL ARRAY HAVE A SIZE
     public double jsDivergence(Document doc1, Document doc2) {
         double divergence = 0;
-        List<String> wordsInBoth = new ArrayList<String>(findWordsInBoth(doc1, doc2));
+        List<String> wordsInBoth = new ArrayList<>(findWordsInBoth(doc1, doc2));
+        Map<String,Integer> wordCountsDoc1 = getWordCounts(doc1);
+        Map<String,Integer> wordCountsDoc2 = getWordCounts(doc2);
         for (int i = 0; i < wordsInBoth.size(); i++) {
-            int frequencyInDoc1 = getWordCounts(doc1).get(wordsInBoth.get(i));
-            int frequencyInDoc2 = getWordCounts(doc2).get(wordsInBoth.get(i));
+            int frequencyInDoc1 = wordCountsDoc1.get(wordsInBoth.get(i));
+            int frequencyInDoc2 = wordCountsDoc2.get(wordsInBoth.get(i));
             double probabilityInDoc1 = (double) frequencyInDoc1 / getTotalWordCount(doc1);
             double probabilityInDoc2 = (double) frequencyInDoc2 / getTotalWordCount(doc2);
             divergence += calculateDivergence(probabilityInDoc1, probabilityInDoc2);
@@ -68,13 +70,12 @@ public class DocumentSimilarity {
      * The array contains no repeats.
      */
     private List<String> findWordsInBoth(Document document1, Document document2) {
-        Set<String> wordsInBoth = new HashSet<String>(getWordCounts(document1).keySet());
-        Set<String> wordsInDoc2 = new HashSet<String>(getWordCounts(document1).keySet());
+        Set<String> wordsInBoth = new HashSet<>(getWordCounts(document1).keySet());
+        Set<String> wordsInDoc2 = new HashSet<>(getWordCounts(document2).keySet());
         wordsInBoth.retainAll(wordsInDoc2);
 
         return new ArrayList<String>(wordsInBoth);
     }
-    //TODO: FIND A BETTER WAY TO IMPLEMENT LOG BASE 2
 
     /**
      * Finds the divergence of 2 given probabilities.
@@ -103,9 +104,8 @@ public class DocumentSimilarity {
     /**
      * Count the total number of words in document.
      * @param document A document
-     * @returnTotal number of words in document.
+     * @return Total number of words in document.
      */
-
     private int getTotalWordCount (Document document){
         return TextFormatters.totalWordCount(TextFormatters.sentenceArray(document));
     }
