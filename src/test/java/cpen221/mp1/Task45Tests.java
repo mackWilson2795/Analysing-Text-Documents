@@ -34,6 +34,7 @@ public class Task45Tests {
         Document text6 = new Document("file7", "resources/Text6.txt");
         Document text7 = new Document("file8", "resources/Text7.txt");
 
+
         Set<Document> testDocs = new HashSet<Document>();
 
         testDocs.add(testDoc);
